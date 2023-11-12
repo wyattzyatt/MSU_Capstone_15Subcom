@@ -1,4 +1,4 @@
-function [Output, DelayedTime] =  Subcom15_DummyDelay(Input, DelayTime)
+function [Output, DelayedTime] =  Subcom15_DummyDelay(Input, DelayTime, TS)
 % --------------------------
 % 15Subcom Capstone Project
 % Dummy Delay
@@ -21,7 +21,9 @@ function [Output, DelayedTime] =  Subcom15_DummyDelay(Input, DelayTime)
 % 
 % --------------------------
 
-Timer = tic();
-pause(DelayTime/1000);
-DelayedTime = toc(Timer);
+if TS == 1
+    Timer = tic();
+    pause(DelayTime/1000);
+    DelayedTime = toc(Timer);
+end
 Output = Input;

@@ -5,18 +5,20 @@
 % 11/10/2023
 % --------------------------
 % --------------------------
-close all; clear all; clc;
+%close all; clear all; clc;
 
 % Testing Parameters
-MaxTest = 1000;
-MinTest = 500;
-TestInterval = 15;
-TestRange = MinTest:TestInterval:MaxTest;
+MinTest = 0;
+MaxTest = 2000;
+TestInterval = 1;
+NumberOfTests = 100;
+TestRange = randi((MaxTest-MinTest)/TestInterval,NumberOfTests)*TestInterval + MinTest;%MinTest:TestInterval:MaxTest;
+TestRange = TestRange(1,:);
+TS = 1; % Test System connected
 
 % Array Memory Pre-Allocation
 Error = zeros(size(TestRange));
 AvgError = zeros(size(TestRange));
-Output = zeros(size(TestRange));
 TestTimes = zeros(size(TestRange));
 TotalTimes = zeros(size(TestRange));
 j=1;
@@ -24,7 +26,7 @@ j=1;
 % Testing/Timing
 for i = TestRange
     Timer1 = tic();
-    [Output(j),TestTimes(j)] = Subcom15_DummyDelay("10101010",i);
+    [Output,TestTimes(j)] = Subcom15_DummyDelay("10101010",i,TS);
     TotalTimes(j) = toc(Timer1);
     Error(j) = TotalTimes(j)-TestTimes(j);
     AvgError(j) =  sum(Error)/length(find(Error~=0));
@@ -34,13 +36,16 @@ end
 % Plotting
 figure(1);
 subplot(211);
-plot(TestRange,Error*1000);hold on;
-semilogy(TestRange,AvgError*1000);hold off;
-xlabel("Testing Time (ms)")
-ylabel("Resulting Error (ms)")
+plot(1:length(Error),Error*1000);hold on;
+plot(1:length(AvgError),AvgError*1000);hold off;
+xlabel("Test Sample");
+ylabel("Resulting Error (ms)");
+legend("Error","Average Error");
 subplot(212);
-plot(TestRange,TotalTimes*1000);hold on;
-semilogy(TestRange,TestTimes*1000);hold off;
-xlabel("Testing Time (ms)")
-ylabel("Resulting Time (ms)")
+plot(1:length(TotalTimes),TotalTimes*1000);hold on;
+plot(1:length(TestTimes),TestTimes*1000);hold off;
+xlabel("Test Sample");
+ylabel("Resulting Time (ms)");
+legend("Total Time","Test Only Time");
+disp(max(Error)*1000);
 
