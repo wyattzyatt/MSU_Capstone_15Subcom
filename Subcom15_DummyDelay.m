@@ -15,9 +15,13 @@ function [Output, DelayedTime] =  Subcom15_DummyDelay(Input, DelayTime, TS)
 % 
 % Input: The input binary array given from the Test System
 % Output: The output binary array returned to the Test System
+% DelayedTime: The time measured delayed at the closest to the pause
+% possible
 % DelayTime: The ammount of delay to create (-1 for random) in miliseconds
+% TS: 1 or 0, to determine whether the test system is connected or not, 1
+% if true
 % 
-% Output = DummyDelay(Input, DelayTime)
+% [Output, DelayedTime] = DummyDelay(Input, DelayTime, TS)
 % 
 % --------------------------
 
@@ -25,5 +29,6 @@ if TS == 1
     Timer = tic();
     pause(DelayTime/1000);
     DelayedTime = toc(Timer);
+    clear Timer
 end
 Output = Input;
