@@ -17,7 +17,6 @@ function [Output, DelayedTime] =  Subcom15_DummyDelay(Input, DelayTime, TS)
 % Output: The output binary array returned to the Test System
 % DelayedTime: The time measured delayed at the closest to the pause
 % possible
-% DelayTime: The ammount of delay to create (-1 for random) in miliseconds
 % TS: 1 or 0, to determine whether the test system is connected or not, 1
 % if true
 % 

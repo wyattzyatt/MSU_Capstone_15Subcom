@@ -8,11 +8,11 @@
 %close all; clear all; clc;
 
 % Testing Parameters
-MinTest = 15;
-MaxTest = 70;
+MinTest = 10;
+MaxTest = 20;
 TestInterval = 1;
-NumberOfTests = 10000;
-TestRange = randi((MaxTest-MinTest)/TestInterval,NumberOfTests)*TestInterval + MinTest;%MinTest:TestInterval:MaxTest;
+NumberOfTests = 100;
+TestRange = 30 * ones(NumberOfTests);%randi((MaxTest-MinTest)/TestInterval,NumberOfTests)*TestInterval + MinTest;%MinTest:TestInterval:MaxTest;
 TestRange = TestRange(1,:);
 TS = 1; % Test System connected
 
@@ -24,23 +24,28 @@ AvgErrorP = zeros(size(TestRange));
 TestTimes = zeros(size(TestRange));
 TotalTimes = zeros(size(TestRange));
 j=1;
-
+for k = 20
+    Timer1 = tic();
+    %toc(Timer1);
+    clear Timer1
+end
 % Testing/Timing
 for i = TestRange
+    
     Timer1 = tic();
     [Output,TestTimes(j)] = Subcom15_DummyDelay("10101010",i,TS);
     TotalTimes(j) = toc(Timer1);
-    if j>=10
-%         AvgErrorT(j) =  sum(ErrorT(j-10:j))/10;%length(find(Error~=0));
-%         AvgErrorP(j) =  sum(ErrorP(j-10:j))/10;
-        ErrorT(j) = TotalTimes(j)-TestTimes(j);
-        ErrorP(j) = ErrorT(j)/TestTimes(j);
+    ErrorT(j) = TotalTimes(j)-TestTimes(j);
+    ErrorP(j) = ErrorT(j)/TestTimes(j);
+%     if j>=10
+%         ErrorT(j) = TotalTimes(j)-TestTimes(j);
+%         ErrorP(j) = ErrorT(j)/TestTimes(j);
+%         AvgErrorT(j) =  sum(ErrorT)/length(find(ErrorT~=0));
+%         AvgErrorP(j) =  sum(ErrorP)/length(find(ErrorP~=0));
+%     else
         AvgErrorT(j) =  sum(ErrorT)/length(find(ErrorT~=0));
         AvgErrorP(j) =  sum(ErrorP)/length(find(ErrorP~=0));
-    else
-        AvgErrorT(j) =  sum(ErrorT)/length(find(ErrorT~=0));
-        AvgErrorP(j) =  sum(ErrorP)/length(find(ErrorP~=0));
-    end
+%     end
     j=j+1;
     clear Timer1
     clear tic
@@ -51,22 +56,22 @@ end
 figure(1);
 
 subplot(311);
-plot(10:length(ErrorT),ErrorT(10:end)*1000);hold on;
-plot(10:length(AvgErrorT),AvgErrorT(10:end)*1000);hold off;
+plot(1:length(ErrorT),ErrorT(1:end)*1000);hold on;
+plot(1:length(AvgErrorT),AvgErrorT(1:end)*1000);hold off;
 xlabel("Test Sample");
 ylabel("Resulting Error (ms)");
 legend("Error","Average Error");
 
 subplot(312);
-plot(10:length(ErrorP),ErrorP(10:end)*100);hold on;
-plot(10:length(AvgErrorP),AvgErrorP(10:end)*100);hold off;
+plot(1:length(ErrorP),ErrorP(1:end)*100);hold on;
+plot(1:length(AvgErrorP),AvgErrorP(1:end)*100);hold off;
 xlabel("Test Sample");
 ylabel("Resulting Error (%)");
 legend("Error","Average Error");
 
 subplot(313);
-plot(10:length(TotalTimes),TotalTimes(10:end)*1000);hold on;
-plot(10:length(TestTimes),TestTimes(10:end)*1000);hold off;
+plot(1:length(TotalTimes),TotalTimes(1:end)*1000);hold on;
+plot(1:length(TestTimes),TestTimes(1:end)*1000);hold off;
 xlabel("Test Sample");
 ylabel("Resulting Time (ms)");
 legend("Total Time","Test Only Time");
