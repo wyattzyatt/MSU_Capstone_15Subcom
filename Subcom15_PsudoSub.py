@@ -27,11 +27,37 @@ class Communicator:
         return list(nlist)
     
     def addCommand(self, CMD): # Adds a command to the Communicator's repertoire
-        self.commands[CMD] = bin(len(self.commands))
+        
+            
+        if(self.commands.get(CMD)):
+            print(f"{CMD} is already a command")
+        else:
+            tempItems = self.commands.items()
+            tempItems2 = {}
+            for i in tempItems:
+                tempItems2[i[0]] = int(i[1],2)
+            sorted_dict = dict(sorted(tempItems2.items(), key=lambda item: item[1]))
+            i = 0
+            for j in sorted_dict.values():
+                if (i < 255):
+
+                    if (i != j):
+                        self.commands[CMD] = bin(i)
+                        print(f"{CMD} Added to index {self.commands[CMD]}")
+                        return
+                    i = i + 1
+                else:
+                    print(f"Maximum Number of commands reached: {i}")
+                    return
+            self.commands[CMD] = bin(i)
+            print(f"{CMD} Added to index {self.commands[CMD]}")
+            
     
     def removeCommand(self, CMD): # Removes a command
         if(self.commands.get(CMD)):
             del self.commands[CMD]
+        else:
+            print(f"{CMD} is not a removable command")
     
     def sendCommand(self, CMD): # Calls the Matlab Scripts that will send the command to the other sub
         self.sent = self.commands[CMD]
