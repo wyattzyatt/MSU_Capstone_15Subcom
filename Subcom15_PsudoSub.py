@@ -60,15 +60,23 @@ class Communicator:
             print(f"{CMD} is not a removable command")
     
     def sendCommand(self, CMD): # Calls the Matlab Scripts that will send the command to the other sub
-        self.sent = self.commands[CMD]
-        self.received = ""
-        x = 0
-        while self.received == "":
-            if x == 0:
-                self.received = self.eng.Subcom15_Communicate(self.sent, self.testSystem)
-                x=1
-                print(f"{self.sent} queued to send...")
-        print(f"{self.received} received")
+        if(self.commands.get(CMD)):
+            self.sent = self.commands[CMD]
+            
+            self.received = ''
+            eng = matlab.engine.start_matlab()
+            x = 0
+            while self.received == '':
+                if x == 0:
+                    self.received = eng.Subcom15_Communicate(float(int(self.sent,2)), self.testSystem)
+                    x=1
+                    print(f"{self.sent} queued to send...")
+            print(f"{self.received} received")
+        else:
+            print(f"{CMD} is not a recognized command")
+        eng.quit
+        return
+            
     
     def readCommand(self):
         received = self.received
