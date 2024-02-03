@@ -26,7 +26,8 @@ function [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 if TS == 1 
    Timer1 tic();
 end
-
+Subcom15_Transmit(SendCommand);
+ReceivedCommand = Subcom15_Receive();
 if TS == 1 
    toc(Timer1); 
    % TODO Make a GUI that displays information

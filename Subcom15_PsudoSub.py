@@ -1,4 +1,3 @@
-    # -*- coding: utf-8 -*-
 """
 Created on Wed Dec 27 15:14:43 2023
 
@@ -13,10 +12,9 @@ class Communicator:
     def __init__(self, name: str = "Communicator Object", CMD: str = "Default") -> None :
         self.name: str = name
         self.commands: dict = {CMD:bin(0)}
-        self.received: str = ""
-        self.sent: str = ""
-        self.testSystem: int = 0
-        self.eng = matlab.engine.start_matlab()
+        self.received: str = ''
+        self.sent: str = ''
+        self.testSystem: float = 0.0
         print(f"{self.name} initialized")
         #StaticUtilities.logger.info(f"{self.name} initialized")
     
@@ -51,10 +49,10 @@ class Communicator:
         return received
     
     def attachTestSystem(self):
-        self.testSystem = 1
+        self.testSystem = 1.0
         
     def detachTestSystem(self):
-        self.testSystem = 0
+        self.testSystem = 0.0
 
 # Testing
 c = Communicator()
