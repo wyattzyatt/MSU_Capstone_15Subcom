@@ -6,6 +6,7 @@ Created on Wed Dec 27 15:14:43 2023
 
 #from static_utilities import StaticUtilities
 import matlab.engine
+import threading
 
 class Communicator:
     
@@ -15,6 +16,7 @@ class Communicator:
         self.received: str = ''
         self.sent: str = ''
         self.testSystem: float = 0.0
+        self.thread = threading.Thread(target=self.sendCommandEx)
         print(f"{self.name} initialized")
         #StaticUtilities.logger.info(f"{self.name} initialized")
     
@@ -59,29 +61,36 @@ class Communicator:
         else:
             print(f"{CMD} is not a removable command")
     
-    def sendCommand(self, CMD): # Calls the Matlab Scripts that will send the command to the other sub
-        if(self.commands.get(CMD)):
-            self.sent = self.commands[CMD]
-            
-            self.received = ''
-            eng = matlab.engine.start_matlab()
-            x = 0
-            while self.received == '':
-                if x == 0:
-                    self.received = eng.Subcom15_Communicate(float(int(self.sent,2)), self.testSystem)
-                    x=1
-                    print(f"{self.sent} queued to send...")
-            print(f"{self.received} received")
-        else:
-            print(f"{CMD} is not a recognized command")
+    def sendCommandEx(self): # Calls the Matlab Scripts that will send the command to the other sub  
+        self.received = ''
+        eng = matlab.engine.start_matlab()
+        x = 0
+        while self.received == '':
+            if x == 0:
+                self.received = eng.Subcom15_Communicate(self.sent, self.testSystem)
+                x=1
+                print(f"{self.sent} queued to send...")
+            else:
+                self.received = eng.Subcom15_Communicate('', self.testSystem)
+        print(f"{self.received} received")
         eng.quit
         return
-            
-    
+         
     def readCommand(self):
         received = self.received
         return received
     
+    def sendCommand(self, CMD): # Calls the sendCommandEx function with a single thread instead of the main thread so as to not bog down the system
+        if(self.commands.get(CMD)):
+            self.sent = self.commands[CMD]
+            self.thread.start()
+        else:
+            print(f"{CMD} is not a recognized command")
+            return
+    
+    def join(self):
+        self.thread.join()
+        
     def attachTestSystem(self):
         self.testSystem = 1.0
         
@@ -89,14 +98,21 @@ class Communicator:
         self.testSystem = 0.0
 
 # Testing
-c = Communicator()
-print(c.commandList())
-print(c.commandCodes())
-c.addCommand("Forward")
-print(c.commandList())
-print(c.commandCodes())
-c.addCommand("Backward")
+c = Communicator("Communicator Object","Up")
+
+c.addCommand(f"Down")
+c.addCommand(f"Forward")
+c.addCommand(f"Backward")
+
+c.removeCommand(f"Forward")
+
+c.addCommand(f"Left")
+c.addCommand(f"Right")
+c.addCommand(f"Forward")
+
 print(c.commandList())
 print(c.commandCodes())
 c.attachTestSystem()
 c.sendCommand("Forward")
+
+    
