@@ -5,7 +5,7 @@ function [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 % Wyatt Weller
 % 1/3/2024
 % --------------------------
-% This Script is the basics for our communication system, and will
+% This Script contains the basics for our communication system, and will
 % be treated as if it is the function being called and return the variables
 % as if it was an immitation of our physical system sending and receiving
 % commands and thus it will be taking a command as an input, and returning
@@ -22,16 +22,21 @@ function [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 % [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 % 
 % --------------------------
-
-if TS == 1 
-   Timer1 tic();
+if (SendCommand ~= 0 | SendCommand ~= [])
+    if TS == 1 
+        for k = 20
+            Timer1 = tic();
+            clear Timer1
+        end
+        Timer1 = tic();
+    end
+    Subcom15_Transmit(SendCommand);
+else
+    ReceivedCommand = Subcom15_Receive();
+    if TS == 1 
+       toc(Timer1); 
+       % TODO Make a GUI that displays information
+    end
 end
-Subcom15_Transmit(SendCommand);
-ReceivedCommand = Subcom15_Receive();
-if TS == 1 
-   toc(Timer1); 
-   % TODO Make a GUI that displays information
-end
-
 end
 
