@@ -1,9 +1,36 @@
 """
+--------------------------
+15Subcom Capstone Project
+Communication Protocol
+@author: team SubCom15 - Wyatt
 Created on Wed Dec 27 15:14:43 2023
+--------------------------
+The Communicator class facilitates communication between systems by sending and receiving commands. 
+It allows for adding, removing, and executing commands, as well as attaching and detaching a test system. 
+The class employs multithreading to send commands without blocking the main thread.
 
-@author: team Subcom15 - Wyatt
+Use Case:
+
+my_communicator = Communicator(name="My Communicator", CMD="Default")
+
+Add Commands:
+    my_communicator.addCommand("NewCommand")
+Remove Commands:
+    my_communicator.removeCommand("NewCommand")
+Send Commands:
+    my_communicator.sendCommand("NewCommand")
+Set Send Commands:
+    my_communicator.sendCommand("NewCommand")
+Read Received Command:
+    received_command = my_communicator.readCommand()
+Attach/Detach Test System:
+    my_communicator.attachTestSystem()
+    my_communicator.detachTestSystem()
+Join Threads (if necessary):
+    my_communicator.join()
+
+--------------------------
 """
-
 #from static_utilities import StaticUtilities
 import matlab.engine
 import threading
@@ -14,7 +41,7 @@ class Communicator:
         self.name: str = name
         self.commands: dict = {CMD:bin(0)}
         self.received: str = ''
-        self.sent: str = ''
+        self.send: str = ''
         self.testSystem: float = 0.0
         self.thread = threading.Thread(target=self.sendCommandEx)
         print(f"{self.name} initialized")
@@ -29,23 +56,20 @@ class Communicator:
         return list(nlist)
     
     def addCommand(self, CMD): # Adds a command to the Communicator's repertoire
-        
-            
         if(self.commands.get(CMD)):
             print(f"{CMD} is already a command")
         else:
-            tempItems = self.commands.items()
+            tempItems = self.commands.items() # Sorts the binary values in the dictionary
             tempItems2 = {}
             for i in tempItems:
                 tempItems2[i[0]] = int(i[1],2)
             sorted_dict = dict(sorted(tempItems2.items(), key=lambda item: item[1]))
             i = 0
-            for j in sorted_dict.values():
+            for j in sorted_dict.values(): # Iterates through the sorted values to find the index to put the next comand
                 if (i < 255):
-
                     if (i != j):
                         self.commands[CMD] = bin(i)
-                        print(f"{CMD} Added to index {self.commands[CMD]}")
+                        print(f"{CMD} Added to index {self.commands[CMD]}") # Adds the command to the index found
                         return
                     i = i + 1
                 else:
@@ -53,66 +77,59 @@ class Communicator:
                     return
             self.commands[CMD] = bin(i)
             print(f"{CMD} Added to index {self.commands[CMD]}")
+            return
             
     
-    def removeCommand(self, CMD): # Removes a command
+    def removeCommand(self, CMD): # Removes a command from anywhere in the command list
         if(self.commands.get(CMD)):
             del self.commands[CMD]
         else:
             print(f"{CMD} is not a removable command")
+        return
     
-    def sendCommandEx(self): # Calls the Matlab Scripts that will send the command to the other sub  
+    def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
         self.received = ''
         eng = matlab.engine.start_matlab()
         x = 0
         while self.received == '':
             if x == 0:
-                self.received = eng.Subcom15_Communicate(self.sent, self.testSystem)
+                self.received = eng.Subcom15_Communicate(self.send, self.testSystem)
                 x=1
-                print(f"{self.sent} queued to send...")
+                print(f"{self.send} queued to send...")
             else:
                 self.received = eng.Subcom15_Communicate('', self.testSystem)
         print(f"{self.received} received")
         eng.quit
         return
          
-    def readCommand(self):
+    def readCommand(self): # Returns the currently received command
         received = self.received
         return received
     
     def sendCommand(self, CMD): # Calls the sendCommandEx function with a single thread instead of the main thread so as to not bog down the system
         if(self.commands.get(CMD)):
-            self.sent = self.commands[CMD]
+            self.send = self.commands[CMD]
             self.thread.start()
         else:
             print(f"{CMD} is not a recognized command")
-            return
+        return
     
-    def join(self):
+    def setSendCommand(self, CMD): # Allows setting the send command for Explicit command sending 
+        if(self.commands.get(CMD)):
+            self.send = self.commands[CMD]
+        else:
+            print(f"{CMD} is not a recognized command")
+        return
+    
+    def join(self): # If using the default command sending join threads once done to return threads to be usable
         self.thread.join()
+        return
         
-    def attachTestSystem(self):
+    def attachTestSystem(self): # Attaches the Test System for displaying information through MATLAB
         self.testSystem = 1.0
+        return
         
-    def detachTestSystem(self):
+    def detachTestSystem(self): # Detaches the Test System
         self.testSystem = 0.0
-
-# Testing
-c = Communicator("Communicator Object","Up")
-
-c.addCommand(f"Down")
-c.addCommand(f"Forward")
-c.addCommand(f"Backward")
-
-c.removeCommand(f"Forward")
-
-c.addCommand(f"Left")
-c.addCommand(f"Right")
-c.addCommand(f"Forward")
-
-print(c.commandList())
-print(c.commandCodes())
-c.attachTestSystem()
-c.sendCommand("Forward")
-
+        return
     
