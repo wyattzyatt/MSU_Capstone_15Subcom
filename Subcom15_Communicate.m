@@ -23,26 +23,40 @@ function [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 % 
 % --------------------------
 
-TestArray = ~SendCommand;
-ReceivedCommand = TestArray;
+% -- Variables
+fs = 48000; % Sampling frequency (samples per second)
+dt = 1/fs; % seconds per sample
+F1 = 4000; % Sine wave frequency (4k hertz)
+F2 = 8000; % Sine wave frequency (8k hertz)
 
-% if (SendCommand ~= 0 | SendCommand ~= [])
-%     if TS == 1 
-%         for k = 20
-%             Timer1 = tic();
-%             clear Timer1
-%         end
-%         Timer1 = tic();
-%     end
-%     TestArray = ~SendCommand;
-%     %Subcom15_Transmit(SendCommand);
-% else
-%     ReceivedCommand = TestArray;
-%     %ReceivedCommand = Subcom15_Receive();
-%     if TS == 1 
-%        toc(Timer1); 
-%        % TODO Make a GUI that displays information
-%     end
-% end
-% end
+SendCommand = cell2mat(SendCommand)
+
+if (~isempty(SendCommand))
+    if TS == 1 
+        for k = 20
+            Timer1 = tic();
+            clear Timer1
+        end
+        Timer1 = tic();
+    end
+    Subcom15_BFSK(SendCommand, dt, F1, F2);
+    ReceivedCommand = '';
+else
+    % BFSK IS FROM READING IN THE HYDROPHONE EVENTUALLY
+
+    % Create an audio input object
+    audioInput = audioDeviceReader('SampleRate', 48000, 'NumChannels', 1);
+    bfsk = audioInput();
+
+    % Demodulate the Audio received
+    ReceivedCommand = Subcom15_Demodulate(bfsk, F1, F2, fs);
+
+    % Release the audio input object
+    release(audioInput);
+    if TS == 1 
+       toc(Timer1); 
+       % TODO Make a GUI that displays information
+    end
+end
+end
 

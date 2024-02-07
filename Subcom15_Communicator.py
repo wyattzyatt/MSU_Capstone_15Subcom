@@ -34,6 +34,7 @@ Join Threads (if necessary):
 #from static_utilities import StaticUtilities
 import matlab.engine
 import threading
+import numpy as np 
 
 class Communicator:
     
@@ -90,12 +91,9 @@ class Communicator:
     def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
         self.received = ''
         eng = matlab.engine.start_matlab()
-        x = 0
-        
-        eng.Subcom15_Communicate(self.send, self.testSystem)
-        x=1
-        print(f"{self.send} queued to send...")
-        
+        pySendCommand = [float(int(c)) for c in self.send[2:len(self.send)].zfill(8)]
+        print(f"{pySendCommand} queued to send...")
+        eng.Subcom15_Communicate(pySendCommand, self.testSystem)
         while self.received == '':
             self.received = eng.Subcom15_Communicate('', self.testSystem)
         print(f"{self.received} received")
