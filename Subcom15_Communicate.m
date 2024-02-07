@@ -22,21 +22,27 @@ function [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 % [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 % 
 % --------------------------
-if (SendCommand ~= 0 | SendCommand ~= [])
-    if TS == 1 
-        for k = 20
-            Timer1 = tic();
-            clear Timer1
-        end
-        Timer1 = tic();
-    end
-    Subcom15_Transmit(SendCommand);
-else
-    ReceivedCommand = Subcom15_Receive();
-    if TS == 1 
-       toc(Timer1); 
-       % TODO Make a GUI that displays information
-    end
-end
-end
+
+TestArray = ~SendCommand;
+ReceivedCommand = TestArray;
+
+% if (SendCommand ~= 0 | SendCommand ~= [])
+%     if TS == 1 
+%         for k = 20
+%             Timer1 = tic();
+%             clear Timer1
+%         end
+%         Timer1 = tic();
+%     end
+%     TestArray = ~SendCommand;
+%     %Subcom15_Transmit(SendCommand);
+% else
+%     ReceivedCommand = TestArray;
+%     %ReceivedCommand = Subcom15_Receive();
+%     if TS == 1 
+%        toc(Timer1); 
+%        % TODO Make a GUI that displays information
+%     end
+% end
+% end
 

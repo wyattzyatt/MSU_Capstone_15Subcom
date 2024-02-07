@@ -91,13 +91,13 @@ class Communicator:
         self.received = ''
         eng = matlab.engine.start_matlab()
         x = 0
+        
+        eng.Subcom15_Communicate(self.send, self.testSystem)
+        x=1
+        print(f"{self.send} queued to send...")
+        
         while self.received == '':
-            if x == 0:
-                self.received = eng.Subcom15_Communicate(self.send, self.testSystem)
-                x=1
-                print(f"{self.send} queued to send...")
-            else:
-                self.received = eng.Subcom15_Communicate('', self.testSystem)
+            self.received = eng.Subcom15_Communicate('', self.testSystem)
         print(f"{self.received} received")
         eng.quit
         return
