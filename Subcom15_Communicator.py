@@ -34,7 +34,7 @@ Join Threads (if necessary):
 #from static_utilities import StaticUtilities
 import matlab.engine
 import threading
-import numpy as np 
+
 
 class Communicator:
     

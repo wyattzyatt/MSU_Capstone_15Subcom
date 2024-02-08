@@ -25,10 +25,10 @@ def test_communicators(num_communicators):
                 num_commands += 1
                 if num_commands > 255:
                     print(f"Communicator {_} reached maximum commands: {num_commands}")
-                    # Send 100 random commands
-                    for _ in range(100):
-                        random_command = random.choice(communicator.commandList())
-                        communicator.sendCommand(random_command)
+                    # Send all commands in random order
+                    shuffled_commands = random.sample(communicator.commandList(), len(communicator.commandList()))
+                    for cmd in shuffled_commands:
+                        communicator.sendCommand(cmd)
                         time.sleep(1)
                         print(f"Communicator received {communicator.readCommand()}")
                         communicator.join()
@@ -44,25 +44,19 @@ def test_communicators(num_communicators):
             assert num_commands >= 0, "Number of commands cannot be negative"
             
 # Testing
-#test_communicators(2)
+test_communicators(1)
 
-communicator = Communicator(f"Test Communicator {0}",f"Command0")
-communicator.addCommand(f"Command{1}")
-communicator.addCommand(f"Command{2}")
-communicator.addCommand(f"Command{3}")
-communicator.addCommand(f"Command{4}")
-communicator.addCommand(f"Command{5}")
-communicator.addCommand(f"Command{6}")
-communicator.addCommand(f"Command{7}")
-communicator.addCommand(f"Command{8}")
-communicator.addCommand(f"Command{9}")
-communicator.addCommand(f"Command{10}")
-communicator.addCommand(f"Command{11}")
-communicator.addCommand(f"Command{12}")
-random_command = random.choice(communicator.commandList())
-communicator.sendCommand(random_command)
-read = communicator.readCommand()
-time.sleep(1)
-communicator.join()
+# communicator = Communicator(f"Test Communicator {0}",f"Command0")
+
+# num_commands = 1
+# while num_commands <= 255:
+#     communicator.addCommand(f"Command{num_commands}")
+#     num_commands += 1
+
+# random_command = random.choice(communicator.commandList())
+# communicator.sendCommand(random_command)
+# read = communicator.readCommand()
+# time.sleep(1)
+# communicator.join()
 
 # Look into multiprocessing toolbox

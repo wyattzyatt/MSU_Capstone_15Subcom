@@ -29,7 +29,7 @@ dt = 1/fs; % seconds per sample
 F1 = 4000; % Sine wave frequency (4k hertz)
 F2 = 8000; % Sine wave frequency (8k hertz)
 
-SendCommand = cell2mat(SendCommand)
+SendCommand = cell2mat(SendCommand);
 
 if (~isempty(SendCommand))
     if TS == 1 
@@ -46,8 +46,18 @@ else
 
     % Create an audio input object
     audioInput = audioDeviceReader('SampleRate', 48000, 'NumChannels', 1);
-    bfsk = audioInput();
+    audioData = audioInput();
+    
+    % Set up FFT parameters
+    fftSize = 2048;
+    spectrumSPL_old = zeros(1025, 1);
+    
+    % Calibration factor (adjust this based on your microphone and setup)
+    calibrationFactor = 45; % For example, if your microphone reads 94 dB as 0 dB SPL
 
+    % Compute the spectrum using FFT
+    bfsk = abs(fft(audioData, fftSize));
+    
     % Demodulate the Audio received
     ReceivedCommand = Subcom15_Demodulate(bfsk, F1, F2, fs);
 
