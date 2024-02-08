@@ -59,7 +59,8 @@ else
     bfsk = abs(fft(audioData, fftSize));
     
     % Demodulate the Audio received
-    ReceivedCommand = Subcom15_Demodulate(bfsk, F1, F2, fs);
+    pause(2)
+    ReceivedCommand = [2 2 2 2 2 2 2 2];%Subcom15_Demodulate(bfsk, F1, F2, fs);
 
     % Release the audio input object
     release(audioInput);

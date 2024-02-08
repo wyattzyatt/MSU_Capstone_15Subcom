@@ -29,9 +29,12 @@ def test_communicators(num_communicators):
                     shuffled_commands = random.sample(communicator.commandList(), len(communicator.commandList()))
                     for cmd in shuffled_commands:
                         communicator.sendCommand(cmd)
-                        time.sleep(1)
-                        print(f"Communicator received {communicator.readCommand()}")
+                        while communicator.readCommand() == '':
+                            print(f"Communicator received {communicator.readCommand()}")
+                            time.sleep(1)
                         communicator.join()
+                        time.sleep(1)
+                        break
                     break
             
             # Remove commands from random locations

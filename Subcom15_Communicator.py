@@ -34,7 +34,7 @@ Join Threads (if necessary):
 #from static_utilities import StaticUtilities
 import matlab.engine
 import threading
-
+from multiprocessing import Process
 
 class Communicator:
     
@@ -44,7 +44,9 @@ class Communicator:
         self.received: str = ''
         self.send: str = ''
         self.testSystem: float = 0.0
+        self.eng = matlab.engine.start_matlab()
         self.thread = threading.Thread(target=self.sendCommandEx)
+        self.process = Process(target=self.sendCommandEx)
         print(f"{self.name} initialized")
         #StaticUtilities.logger.info(f"{self.name} initialized")
     
@@ -90,14 +92,12 @@ class Communicator:
     
     def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
         self.received = ''
-        eng = matlab.engine.start_matlab()
         pySendCommand = [float(int(c)) for c in self.send[2:len(self.send)].zfill(8)]
         print(f"{pySendCommand} queued to send...")
-        eng.Subcom15_Communicate(pySendCommand, self.testSystem)
+        self.eng.Subcom15_Communicate(pySendCommand, self.testSystem)
         while self.received == '':
-            self.received = eng.Subcom15_Communicate('', self.testSystem)
+            self.received = self.eng.Subcom15_Communicate('', self.testSystem)
         print(f"{self.received} received")
-        eng.quit
         return
          
     def readCommand(self): # Returns the currently received command
@@ -107,6 +107,7 @@ class Communicator:
     def sendCommand(self, CMD): # Calls the sendCommandEx function with a single thread instead of the main thread so as to not bog down the system
         if(self.commands.get(CMD)):
             self.send = self.commands[CMD]
+            print(f"thread starting:")
             self.thread.start()
         else:
             print(f"{CMD} is not a recognized command")
@@ -120,6 +121,7 @@ class Communicator:
         return
     
     def join(self): # If using the default command sending join threads once done to return threads to be usable
+        print(f"thread stopping:")
         self.thread.join()
         return
         
