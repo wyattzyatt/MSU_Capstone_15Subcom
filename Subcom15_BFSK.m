@@ -36,4 +36,5 @@ function [bfsk, t] = Subcom15_BFSK(binary_string, dt, F1, F2)
     title('Base band signal');
     
     bfsk = BFSK;
+    soundsc(bfsk, 1/dt);
 end

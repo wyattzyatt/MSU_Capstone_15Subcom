@@ -47,17 +47,19 @@ def test_communicators(num_communicators):
             assert num_commands >= 0, "Number of commands cannot be negative"
             
 # Testing
-test_communicators(1)
+# test_communicators(1)
 
-# communicator = Communicator(f"Test Communicator {0}",f"Command0")
+communicator = Communicator(f"Test Communicator {0}",f"Command0")
 
-# num_commands = 1
-# while num_commands <= 255:
-#     communicator.addCommand(f"Command{num_commands}")
-#     num_commands += 1
+num_commands = 1
+while num_commands <= 255:
+    communicator.addCommand(f"Command{num_commands}")
+    num_commands += 1
 
-# random_command = random.choice(communicator.commandList())
-# communicator.sendCommand(random_command)
+random_command = random.choice(communicator.commandList())
+communicator.setSendCommand(random_command)
+communicator.sendCommandEx()
+time.sleep(1)   
 # read = communicator.readCommand()
 # time.sleep(1)
 # communicator.join()

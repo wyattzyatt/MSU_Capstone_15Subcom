@@ -38,32 +38,46 @@ if (~isempty(SendCommand))
             clear Timer1
         end
         Timer1 = tic();
-    end
+        end5
     Subcom15_BFSK(SendCommand, dt, F1, F2);
     ReceivedCommand = '';
 else
     % BFSK IS FROM READING IN THE HYDROPHONE EVENTUALLY
 
-    % Create an audio input object
-    audioInput = audioDeviceReader('SampleRate', 48000, 'NumChannels', 1);
-    audioData = audioInput();
-    
-    % Set up FFT parameters
-    fftSize = 2048;
-    spectrumSPL_old = zeros(1025, 1);
-    
-    % Calibration factor (adjust this based on your microphone and setup)
-    calibrationFactor = 45; % For example, if your microphone reads 94 dB as 0 dB SPL
+    % Create an audiorecorder object
+    recObj = audiorecorder(fs, 16, 1, 1); % 16-bit recording, mono channel
 
-    % Compute the spectrum using FFT
-    bfsk = abs(fft(audioData, fftSize));
+    snippit = [0 0 0]
+    while (~isequal(snippit(1:3),[1 0 1]))
+        % Set the sampling rate and duration of recording
+        duration = 1; % Duration of recording in seconds
+        
+        % Record audio for the specified duration
+        disp('Recording...');
+        recordblocking(recObj, duration);
+        pause(duration); % Wait for the recording to complete
+        disp('Recording stopped.');
+
+        audioData = getaudiodata(recObj);
+
+        snippit = Subcom15_Demodulate(audioData, F1, F2, fs)'
+    end
+
+    % Set the sampling rate and duration of recording
+    duration = 1; % Duration of recording in seconds
     
-    % Demodulate the Audio received
-    pause(2)
-    ReceivedCommand = [2 2 2 2 2 2 2 2];%Subcom15_Demodulate(bfsk, F1, F2, fs);
+    % Record audio for the specified duration
+    disp('Recording...');
+    recordblocking(recObj, duration);
+    pause(duration); % Wait for the recording to complete
+    disp('Recording stopped.');
+
+    bfsk = getaudiodata(recObj);
+
+    ReceivedCommand = Subcom15_Demodulate(bfsk, F1, F2, fs)'
 
     % Release the audio input object
-    release(audioInput);
+    % release(recObj);
     if TS == 1 
        toc(Timer1); 
        % TODO Make a GUI that displays information
