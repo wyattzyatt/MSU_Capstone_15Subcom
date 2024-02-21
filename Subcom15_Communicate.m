@@ -29,7 +29,7 @@ dt = 1/fs; % seconds per sample
 F1 = 4000; % Sine wave frequency (4k hertz)
 F2 = 8000; % Sine wave frequency (8k hertz)
 
-SendCommand = cell2mat(SendCommand);
+%SendCommand = cell2mat(SendCommand);
 
 if (~isempty(SendCommand))
     % if TS == 1 
@@ -39,7 +39,7 @@ if (~isempty(SendCommand))
     %     end
     %     Timer1 = tic();
     % end
-    %Subcom15_BFSK(SendCommand, dt, F1, F2);
+    Subcom15_BFSK(SendCommand, dt, F1, F2);
     ReceivedCommand = '';
 else
     % BFSK IS FROM READING IN THE HYDROPHONE EVENTUALLY
@@ -102,7 +102,7 @@ else
 
     %bfsk = getaudiodata(recObj);
 
-    ReceivedCommand = [1 1 1 1 1 1 1 1];%Subcom15_Demodulate(bfsk, F1, F2, fs)';
+    ReceivedCommand = [0 0 0 0 0 0 0 0];%Subcom15_Demodulate(bfsk, F1, F2, fs)';
 
     % Release the audio input object
     % release(recObj);

@@ -10,52 +10,51 @@ from Subcom15_Communicator import Communicator
 import random
 import time
 
-def test_communicators(num_communicators):
-    for _ in range(num_communicators):
-        communicator = Communicator(f"Test Communicator {_}",f"Command0")
-        num_commands = 1
-        while num_commands <= 255:
+def testCommunicators(numCommunicators):
+    for comNum in range(numCommunicators):
+        communicator = Communicator(f"Test Communicator {comNum}",f"Command0")
+        numCommands = 1
+        while numCommands <= 255:
             # Generate a random number of commands to add and remove
-            num_to_add = random.randint(5, 10)
-            num_to_remove = random.randint(1,5)
+            addCount = random.randint(5, 10)
+            removeCount = random.randint(1,5)
             
             # Add commands
-            for i in range(num_to_add):
-                if num_commands <= 255:
-                    communicator.addCommand(f"Command{num_commands}")
-                    num_commands += 1
+            for i in range(addCount):
+                if numCommands <= 255:
+                    communicator.addCommand(f"Command{numCommands}")
+                    numCommands += 1
             
             # Remove commands from random locations
-            commands_to_remove = random.sample(communicator.commandList(), num_to_remove)
-            for cmd in commands_to_remove:
-                if num_commands < 255:
+            removeCommands = random.sample(communicator.commandList(), removeCount)
+            for cmd in removeCommands:
+                if numCommands < 255:
                     communicator.removeCommand(cmd)
-                    num_commands -= 1
+                    numCommands -= 1
                 
-            if num_commands > 255:
-                print(f"Communicator {_} reached maximum commands: {num_commands}")
+            if numCommands > 255:
+                print(f"Communicator {comNum} reached maximum commands: {numCommands}")
                 # Send all commands in random order
-                shuffled_commands = random.sample(communicator.commandList(), len(communicator.commandList()))
-                print(f"Shuffled commands: {shuffled_commands}")
-                for cmd in shuffled_commands:
+                shuffledCommands = random.sample(communicator.commandList(), len(communicator.commandList()))
+                print(f"Shuffled commands: {shuffledCommands}")
+                for cmd in shuffledCommands:
                     communicator.sendCommand(cmd)
                     while communicator.readCommand() == '':
                         time.sleep(0.01)
                     communicator.join()
                 break
                 
-            # Ensure more commands are added than removed
-            assert num_commands >= 0, "Number of commands cannot be negative"
             
 # Testing
-test_communicators(100)
+# TotalSentCommands = [][]
+testCommunicators(100)
 
 # communicator = Communicator(f"Test Communicator {0}",f"Command0")
 
-# num_commands = 1
-# while num_commands <= 255:
-#     communicator.addCommand(f"Command{num_commands}")
-#     num_commands += 1
+# numCommands = 1
+# while numCommands <= 255:
+#     communicator.addCommand(f"Command{numCommands}")
+#     numCommands += 1
 
 # random_command = random.choice(communicator.commandList())
 # communicator.setSendCommand(random_command)

@@ -42,8 +42,9 @@ class Communicator:
         self.name: str = name
         self.commands: dict = {CMD:bin(0)}
         self.received: str = ''
-        self.receivedBin ()
+        self.receivedBin = []
         self.send: str = ''
+        self.sendBin = []
         self.testSystem: float = 0.0
         self.eng = matlab.engine.start_matlab()
         print(f"{self.name} initialized")
@@ -91,25 +92,29 @@ class Communicator:
         return
     
     def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
-        self.received = ''
-        pySendCommand = [float(int(c)) for c in self.send[2:len(self.send)].zfill(8)]
-        print(f"Communicator Sending: {self.send, pySendCommand}")
-        self.eng.Subcom15_Communicate(pySendCommand, self.testSystem)
-        while self.received == '':
+        if (self.send != ''):
+            pySendCommand = [float(int(c)) for c in self.sendBin[2:len(self.send)].zfill(8)]
+            print(f"Communicator Sending: {self.send, self.sendBin, pySendCommand}")
+            self.eng.Subcom15_Communicate(pySendCommand, self.testSystem)
+            self.send = ''
+            self.sendBin = []
+        self.receivedBin = []
+        while self.receivedBin == []:
             self.receivedBin = self.eng.Subcom15_Communicate('', self.testSystem)[0]
         print(f"Communicator Received {self.receivedBin}")
         return
          
     def readCommand(self): # Returns the currently received command
-        for cmd in self.commandCodes:
-            if():
-                wah
+        for cmd in self.commands.keys():
+            if(self.commands.get(cmd) == self.receivedBin):
+                print(f"{cmd}")
         received = self.received
         return received
     
     def sendCommand(self, CMD): # Calls the sendCommandEx function with a single thread instead of the main thread so as to not bog down the system
         if(self.commands.get(CMD)):
-            self.send = self.commands[CMD]
+            self.send = CMD
+            self.sendBin = self.commands[CMD]
             self.thread = threading.Thread(target=self.sendCommandEx)
             self.thread.start()
         else:
@@ -118,7 +123,8 @@ class Communicator:
     
     def setSendCommand(self, CMD): # Allows setting the send command for Explicit command sending 
         if(self.commands.get(CMD)):
-            self.send = self.commands[CMD]
+            self.send = CMD
+            self.sendBin = self.commands[CMD]
         else:
             print(f"{CMD} is not a recognized command")
         return
