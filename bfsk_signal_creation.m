@@ -1,3 +1,4 @@
+
 function [bfsk, t] = bfsk_signal_creation(binary_string, dt, F1, F2)
     StopTime = 1; % Time duration (seconds)
     t = (0:dt:StopTime-dt)';
