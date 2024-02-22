@@ -14,40 +14,39 @@ def testCommunicators(numCommunicators):
     for comNum in range(numCommunicators):
         communicator = Communicator(f"Test Communicator {comNum}",f"Command0")
         numCommands = 1
-        while numCommands <= 255:
+        while 1:
             # Generate a random number of commands to add and remove
             addCount = random.randint(5, 10)
             removeCount = random.randint(1,5)
-            
-            # Add commands
-            for i in range(addCount):
-                if numCommands <= 255:
-                    communicator.addCommand(f"Command{numCommands}")
-                    numCommands += 1
-            
-            # Remove commands from random locations
-            removeCommands = random.sample(communicator.commandList(), removeCount)
-            for cmd in removeCommands:
-                if numCommands < 255:
-                    communicator.removeCommand(cmd)
-                    numCommands -= 1
-                
+
             if numCommands > 255:
                 print(f"Communicator {comNum} reached maximum commands: {numCommands}")
                 # Send all commands in random order
                 shuffledCommands = random.sample(communicator.commandList(), len(communicator.commandList()))
-                print(f"Shuffled commands: {shuffledCommands}")
                 for cmd in shuffledCommands:
                     communicator.sendCommand(cmd)
                     while communicator.readCommand() == '':
                         time.sleep(0.01)
                     communicator.join()
                 break
+            else:
+                # Add commands
+                for i in range(addCount):
+                    if numCommands <= 255:
+                        communicator.addCommand(f"Command{numCommands}")
+                        numCommands += 1
+                
+                # Remove commands from random locations
+                removeCommands = random.sample(communicator.commandList(), removeCount)
+                for cmd in removeCommands:
+                    if numCommands < 255:
+                        communicator.removeCommand(cmd)
+                        numCommands -= 1
                 
             
 # Testing
 # TotalSentCommands = [][]
-testCommunicators(100)
+testCommunicators(1)
 
 # communicator = Communicator(f"Test Communicator {0}",f"Command0")
 

@@ -34,7 +34,7 @@ Join Threads (if necessary):
 #from static_utilities import StaticUtilities
 import matlab.engine
 import threading
-from multiprocessing import Process
+import time
 
 class Communicator:
     
@@ -72,20 +72,17 @@ class Communicator:
                 if (i < 255):
                     if (i != j):
                         self.commands[CMD] = bin(i)
-                        print(f"{CMD} Added to index {self.commands[CMD]}") # Adds the command to the index found
                         return
                     i = i + 1
                 else:
                     print(f"Maximum Number of commands reached: {i}")
                     return
             self.commands[CMD] = bin(i)
-            print(f"{CMD} Added to index {self.commands[CMD]}")
             return
             
     
     def removeCommand(self, CMD): # Removes a command from anywhere in the command list
         if(self.commands.get(CMD)):
-            print(f"removing {CMD} from {self.commands[CMD]}")
             del self.commands[CMD]
         else:
             print(f"{CMD} is not a removable command")
@@ -94,22 +91,26 @@ class Communicator:
     def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
         if (self.send != ''):
             pySendCommand = [float(int(c)) for c in self.sendBin[2:len(self.send)].zfill(8)]
-            print(f"Communicator Sending: {self.send, self.sendBin, pySendCommand}")
             self.eng.Subcom15_Communicate(pySendCommand, self.testSystem)
+            time.sleep(1)
             self.send = ''
             self.sendBin = []
         self.receivedBin = []
         while self.receivedBin == []:
             self.receivedBin = self.eng.Subcom15_Communicate('', self.testSystem)[0]
-        print(f"Communicator Received {self.receivedBin}")
         return
          
     def readCommand(self): # Returns the currently received command
-        for cmd in self.commands.keys():
-            if(self.commands.get(cmd) == self.receivedBin):
-                print(f"{cmd}")
-        received = self.received
-        return received
+        if(self.receivedBin != []):
+            test = bin(int("".join(str(x)[0] for x in self.receivedBin), 2))
+            for cmd in self.commands.keys():
+                if(self.commands.get(cmd) == test):
+                    self.received = cmd
+                    received = self.received
+                    return received
+        else:
+            print(f"Command Hasn't Been Received Yet")
+            
     
     def sendCommand(self, CMD): # Calls the sendCommandEx function with a single thread instead of the main thread so as to not bog down the system
         if(self.commands.get(CMD)):
