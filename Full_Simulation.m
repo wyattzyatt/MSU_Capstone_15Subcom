@@ -10,6 +10,8 @@ F2 = 8000; % Sine wave frequency (8k hertz)
 
 binary_string = randi([0 1],1,8);
 [bfsk, t] = bfsk_signal_creation(binary_string, dt, F1, F2);
+bfsk2 = [bfsk zeros(1,fs) bfsk zeros(1,fs) bfsk zeros(1,fs)];
+soundsc(bfsk2, fs);
 figure(1)
 plot(t,bfsk);
 xlabel('Time (ms)');
@@ -109,4 +111,6 @@ function demod_sig = demod(bfsk, F1, F2, fs)
     % Demodulation based on instantaneous frequency
     demod_sig = zeros(size(bfsk));
     demod_sig(instantaneous_frequency >= threshold) = 1;
+
+    demod_sig = demod_sig(3000:6000:end);
 end
