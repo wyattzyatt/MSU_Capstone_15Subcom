@@ -29,3 +29,6 @@ codegen/
 
 # Octave session info
 octave-workspace
+
+# Cached Python bytecode
+__pycache__/
