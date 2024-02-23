@@ -35,6 +35,7 @@ Join Threads (if necessary):
 import matlab.engine
 import threading
 import time
+from pytictoc import TicToc
 
 class Communicator:
     
@@ -46,7 +47,10 @@ class Communicator:
         self.send: str = ''
         self.sendBin = []
         self.testSystem: float = 0.0
+        self.timer1 = TicToc()
+        self.timer1.tic()
         self.eng = matlab.engine.start_matlab()
+        self.timer1.toc("matlab eng took")
         print(f"{self.name} initialized")
         #StaticUtilities.logger.info(f"{self.name} initialized")
     
@@ -60,13 +64,14 @@ class Communicator:
     
     def addCommand(self, CMD): # Adds a command to the Communicator's repertoire
         if(self.commands.get(CMD)):
-            print(f"{CMD} is already a command")
+            pass
+            #print(f"{CMD} is already a command")
         else:
-            tempItems = self.commands.items() # Sorts the binary values in the dictionary
-            tempItems2 = {}
-            for i in tempItems:
-                tempItems2[i[0]] = int(i[1],2)
-            sorted_dict = dict(sorted(tempItems2.items(), key=lambda item: item[1]))
+            commandListBin = self.commands.items() # Sorts the binary values in the dictionary
+            commandListInts = {}
+            for i in commandListBin:
+                commandListInts[i[0]] = int(i[1],2)
+            sorted_dict = dict(sorted(commandListInts.items(), key=lambda item: item[1]))
             i = 0
             for j in sorted_dict.values(): # Iterates through the sorted values to find the index to put the next comand
                 if (i < 255):
@@ -90,7 +95,7 @@ class Communicator:
     
     def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
         if (self.send != ''):
-            pySendCommand = [float(int(c)) for c in self.sendBin[2:len(self.send)].zfill(8)]
+            pySendCommand = [float(int(c)) for c in self.sendBin[2:len(self.send)].zfill(8)] # creates an array of matlab formatted values from the binary
             self.eng.Subcom15_Communicate(pySendCommand, self.testSystem)
             time.sleep(1)
             self.send = ''
@@ -102,14 +107,15 @@ class Communicator:
          
     def readCommand(self): # Returns the currently received command
         if(self.receivedBin != []):
-            test = bin(int("".join(str(x)[0] for x in self.receivedBin), 2))
+            binConversion = bin(int("".join(str(x)[0] for x in self.receivedBin), 2)) # Converts the received matlab format into a python binary string
             for cmd in self.commands.keys():
-                if(self.commands.get(cmd) == test):
+                if(self.commands.get(cmd) == binConversion):
                     self.received = cmd
                     received = self.received
-                    return received
         else:
-            print(f"Command Hasn't Been Received Yet")
+            received = ''
+           # print(f"Command Hasn't Been Received Yet")
+        return received
             
     
     def sendCommand(self, CMD): # Calls the sendCommandEx function with a single thread instead of the main thread so as to not bog down the system
@@ -141,4 +147,3 @@ class Communicator:
     def detachTestSystem(self): # Detaches the Test System
         self.testSystem = 0.0
         return
-    

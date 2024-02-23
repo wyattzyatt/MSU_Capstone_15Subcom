@@ -11,6 +11,7 @@ import random
 import time
 
 def testCommunicators(numCommunicators):
+    totalCommands = list( None for _ in range(numCommunicators*256))
     for comNum in range(numCommunicators):
         communicator = Communicator(f"Test Communicator {comNum}",f"Command0")
         numCommands = 1
@@ -23,10 +24,16 @@ def testCommunicators(numCommunicators):
                 print(f"Communicator {comNum} reached maximum commands: {numCommands}")
                 # Send all commands in random order
                 shuffledCommands = random.sample(communicator.commandList(), len(communicator.commandList()))
-                for cmd in shuffledCommands:
-                    communicator.sendCommand(cmd)
-                    while communicator.readCommand() == '':
+                commandNum = 0
+                for sendCmd in shuffledCommands:
+                    communicator.sendCommand(sendCmd)
+                    time.sleep(1)
+                    receivedCmd = communicator.readCommand()
+                    while receivedCmd == '':
                         time.sleep(0.01)
+                        receivedCmd = communicator.readCommand()
+                    totalCommands[comNum*256 + commandNum] = [sendCmd,receivedCmd]
+                    commandNum = commandNum + 1
                     communicator.join()
                 break
             else:
@@ -37,17 +44,18 @@ def testCommunicators(numCommunicators):
                         numCommands += 1
                 
                 # Remove commands from random locations
-                removeCommands = random.sample(communicator.commandList(), removeCount)
-                for cmd in removeCommands:
-                    if numCommands < 255:
-                        communicator.removeCommand(cmd)
-                        numCommands -= 1
+                # removeCommands = random.sample(communicator.commandList(), removeCount)
+                # for cmd in removeCommands:
+                #     if numCommands < 255:
+                #         communicator.removeCommand(cmd)
+                #         numCommands -= 1
+    return totalCommands
                 
             
 # Testing
-# TotalSentCommands = [][]
-testCommunicators(1)
-
+totalCommands = testCommunicators(10)
+print(f"Sent | Received")
+print(totalCommands)
 # communicator = Communicator(f"Test Communicator {0}",f"Command0")
 
 # numCommands = 1
