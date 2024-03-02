@@ -130,8 +130,6 @@ class Communicator:
             self.sendBin = self.commands[CMD]
             self.thread = threading.Thread(target=self.sendCommandEx)
             self.thread.start()
-            while self.thread.is_alive:
-                pass
             return 1
         else:
             print(f"{CMD} is not a recognized command")
