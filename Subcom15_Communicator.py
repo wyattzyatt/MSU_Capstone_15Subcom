@@ -54,6 +54,10 @@ class Communicator:
         print(f"{self.name} initialized")
         #StaticUtilities.logger.info(f"{self.name} initialized")
     
+    def getName(self):
+        Name = self.name
+        return Name
+    
     def commandList(self): # Returns the list if commands the communicator currently has
         nlist = self.commands.keys()
         return list(nlist)
@@ -64,7 +68,7 @@ class Communicator:
     
     def addCommand(self, CMD): # Adds a command to the Communicator's repertoire
         if(self.commands.get(CMD)):
-            pass
+            return 0
             #print(f"{CMD} is already a command")
         else:
             commandListBin = self.commands.items() # Sorts the binary values in the dictionary
@@ -77,20 +81,22 @@ class Communicator:
                 if (i < 255):
                     if (i != j):
                         self.commands[CMD] = bin(i)
-                        return
+                        return 1
                     i = i + 1
                 else:
                     print(f"Maximum Number of commands reached: {i}")
-                    return
+                    return 0
             self.commands[CMD] = bin(i)
-            return
+            return 1
             
     
     def removeCommand(self, CMD): # Removes a command from anywhere in the command list
         if(self.commands.get(CMD)):
             del self.commands[CMD]
+            return 1
         else:
             print(f"{CMD} is not a removable command")
+            return 0
         return
     
     def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
@@ -124,16 +130,22 @@ class Communicator:
             self.sendBin = self.commands[CMD]
             self.thread = threading.Thread(target=self.sendCommandEx)
             self.thread.start()
+            while self.thread.is_alive:
+                pass
+            return 1
         else:
             print(f"{CMD} is not a recognized command")
+            return 0
         return
     
     def setSendCommand(self, CMD): # Allows setting the send command for Explicit command sending 
         if(self.commands.get(CMD)):
             self.send = CMD
             self.sendBin = self.commands[CMD]
+            return 1
         else:
             print(f"{CMD} is not a recognized command")
+            return 0
         return
     
     def join(self): # If using the default command sending join threads once done to return threads to be usable
@@ -141,9 +153,15 @@ class Communicator:
         return
         
     def attachTestSystem(self): # Attaches the Test System for displaying information through MATLAB
-        self.testSystem = 1.0
-        return
+        if self.testSystem == 0:
+            self.testSystem = 1.0
+            return 1
+        else:
+            return 0
         
     def detachTestSystem(self): # Detaches the Test System
-        self.testSystem = 0.0
-        return
+        if self.testSystem == 1:
+            self.testSystem = 0.0
+            return 1
+        else:
+            return 0
