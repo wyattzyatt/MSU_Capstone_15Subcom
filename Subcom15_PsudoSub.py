@@ -30,6 +30,16 @@ def communicate(numCommunicators, Title):
             for cmd in removeCommands:
                 communicator.removeCommand(cmd)
         
+        # Add one additional set of commands with Random values
+        random.seed(seed)
+        currCount = len(communicator.commandList())
+        
+        # Add commands of Random values
+        addCount = random.randint(6, 10)
+        while len(communicator.commandList()) < currCount + addCount:
+            communicator.addCommand(f"Command{random.randint(0, 1024)}")
+           
+        seed = 1
         for i in range(1,comNum+1): seed = seed * i
         random.seed(seed)
         # Send all commands in random order
