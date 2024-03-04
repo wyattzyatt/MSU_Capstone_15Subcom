@@ -45,6 +45,14 @@ def communicate(numCommunicators, Title):
         # Send all commands in random order
         shuffledCommands = random.sample(communicator.commandList(), len(communicator.commandList()))
         commandNum = 0
+        timer1 = TicToc()
+        timer2 = TicToc()
+        for int in range(20):
+            timer1.tic()
+            timer2.tic()
+            timer1.toc("Initializing Timer1: ")
+            timer2.toc("Initializing Timer2: ")
+            
         for sendCmd in shuffledCommands:
             if(Title == "Daughter"):
                 receivedCmd = communicator.readCommand()
@@ -60,7 +68,7 @@ def communicate(numCommunicators, Title):
                 while receivedCmd == '':
                     time.sleep(0.01)
                     receivedCmd = communicator.readCommand()
-            totalCommands[comNum*256 + commandNum] = [sendCmd,receivedCmd]
+            totalCommands[comNum*256 + commandNum] = [sendCmd,receivedCmd,Time]
             commandNum = commandNum + 1
             communicator.join()
     return totalCommands
