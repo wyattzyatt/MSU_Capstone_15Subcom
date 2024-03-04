@@ -84,7 +84,7 @@ class Communicator:
                         return 1
                     i = i + 1
                 else:
-                    print(f"Maximum Number of commands reached: {i}")
+                    #print(f"Maximum Number of commands reached: {i + 1}")
                     return 0
             self.commands[CMD] = bin(i)
             return 1
@@ -119,6 +119,9 @@ class Communicator:
                     self.received = cmd
                     received = self.received
         else:
+            self.send = ''
+            self.thread = threading.Thread(target=self.sendCommandEx)
+            self.thread.start()
             received = ''
            # print(f"Command Hasn't Been Received Yet")
         return received
