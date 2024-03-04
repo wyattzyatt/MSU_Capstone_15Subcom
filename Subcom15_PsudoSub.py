@@ -59,15 +59,19 @@ def communicate(numCommunicators, Title):
                 while receivedCmd == '':
                     time.sleep(0.01)
                     receivedCmd = communicator.readCommand()
+                Time = timer1.tocvalue()
+                timer2.tic()
                 communicator.sendCommand(sendCmd)
                 time.sleep(1)
             elif(Title == "Master"):
+                timer1.tic()
                 communicator.sendCommand(sendCmd)
                 time.sleep(1)
                 receivedCmd = communicator.readCommand()
                 while receivedCmd == '':
                     time.sleep(0.01)
                     receivedCmd = communicator.readCommand()
+                Time = timer2.tocvalue()
             totalCommands[comNum*256 + commandNum] = [sendCmd,receivedCmd,Time]
             commandNum = commandNum + 1
             communicator.join()
