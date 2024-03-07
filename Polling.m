@@ -1,24 +1,20 @@
-% Polling loop for recieving and demodulating signal 
-clc;
-clear all;
-close all;
+function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
+    % Polling loop for recieving and demodulating signal 
+    clc;
+    close all;
 
-%function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
     % Parameters
-    Fs = 48000; % Sampling frequency
-    F0 = 4000; 
-    F1 = 8000;
-    captureDuration = 1; % 1-second capture duration after pulse detection
-    numBitsToDemodulate = 14; % Number of bits to demodulate
+    % Fs = 48000; % Sampling frequency
+    % F0 = 4000; 
+    % F1 = 8000;
+    % captureDuration = 1; % 1-second capture duration after pulse detection
+    % numBitsToDemodulate = 14; % Number of bits to demodulate
     demod_sig = [];
 
-    fc4k = 4000;
-    fc8k = 8000;
-    fr = 1000;
 
-    totalErrors = [];
-
-    knownCommand = [1 0 1 0 0 1 1 1 1 0 0 1 0 1];
+    % totalErrors = [];
+    % 
+    % knownCommand = [1 0 1 0 0 1 1 1 1 0 0 1 0 1];
 
     % bandpass4k = [zeros(1,round((fc4k-fr)*1024/Fs)), ones(1,round(fr*2*1024/Fs)),...
     %             zeros(1,floor((Fs-2*(fc4k+fr))*1024/Fs)), ...
@@ -105,8 +101,8 @@ close all;
                     % Process the binary signal (e.g., print to console)
                     disp(demod_sig);
                     % Compare received bits with known command
-                    num_errors = sum(abs(demod_sig(1:14)' - knownCommand));
-                    totalErrors = [totalErrors, num_errors];
+                    % num_errors = sum(abs(demod_sig(1:14)' - knownCommand));
+                    % totalErrors = [totalErrors, num_errors];
                     break; % Exit loop since valid signal found
                     
                 end
@@ -118,4 +114,4 @@ close all;
     % Release audioDeviceReader object
     %[S,F,T] = spectrogram(captureBuffer,round(Fs*.02),[],[],Fs); figure(); imagesc(T,F,log(abs(S))); set(gca,'YDir','Normal');
     release(audioReader);
-%5nd
+end

@@ -39,7 +39,7 @@ if (~isempty(SendCommand))
 
     ReceivedCommand = '';
 else
-    ReceivedCommand = Subcom15_Polling(bfsk, F1, F2, fs)'; %[0 0 0 0 0 0 0 0];
+    ReceivedCommand = Polling(fs, F1, F2, 1, 14)'; %[0 0 0 0 0 0 0 0];
 end
 end
 

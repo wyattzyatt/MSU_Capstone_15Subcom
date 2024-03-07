@@ -17,5 +17,5 @@ function demod_sig = demod(bfsk, F1, F2, fs, bitLength)
     demod_sig = zeros(size(bfsk));
     demod_sig(instantaneous_frequency >= threshold) = 1;
 
-    demod_sig = demod_sig(round((fs/bitLength)/2):round(fs/bitLength):end);
+    demod_sig = demod_sig(round((fs/bitLength)/2):round(fs/bitLength):end-round((fs/bitLength)/2));
 end

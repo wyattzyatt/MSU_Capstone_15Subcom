@@ -21,6 +21,7 @@ def communicate(numCommunicators, Title):
         currDate = f"{time.localtime()[1]}.{time.localtime()[2]}.{time.localtime()[0]}"
         try: os.mkdir(f"data/{currDate}")
         except: pass
+        time.sleep(1)
         with open(f"data/{currDate}/{Title}{comNum} {currTime}.csv", 'w', newline='') as csvfile:
             file = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             seed = 1
@@ -100,7 +101,7 @@ def communicate(numCommunicators, Title):
 # Testing
 testRuns = 1
 totalDaughterCommands = communicate(testRuns, "Daughter")
-totalMasterCommands = communicate(testRuns, "Master")
-print(f"Master's Total number of commands: {len(totalMasterCommands)}")
-print(f"Sent | Received")
-print(totalMasterCommands)
+# totalMasterCommands = communicate(testRuns, "Master")
+# print(f"Master's Total number of commands: {len(totalMasterCommands)}")
+# print(f"Sent | Received")
+# print(totalMasterCommands)
