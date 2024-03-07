@@ -19,7 +19,8 @@ def communicate(numCommunicators, Title):
         communicator = Communicator(f"{Title} {comNum}",f"Command0")
         currTime = f"{time.localtime()[3]%12}.{time.localtime()[4]}.{time.localtime()[5]}"
         currDate = f"{time.localtime()[1]}.{time.localtime()[2]}.{time.localtime()[0]}"
-        os.mkdir(f"data/{currDate}")
+        try: os.mkdir(f"data/{currDate}")
+        except: pass
         with open(f"data/{currDate}/{Title}{comNum} {currTime}.csv", 'w', newline='') as csvfile:
             file = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             seed = 1

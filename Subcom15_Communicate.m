@@ -16,8 +16,6 @@ function ReceivedCommand = Subcom15_Communicate(SendCommand, TS)
 % SendCommand: The input binary array given to be sent
 % ReceivedCommand: The output binary array returned from the receiving
 % system
-% TS: 1 or 0, to determine whether the test system is connected or not, 1
-% if connected
 % 
 % [ReceivedCommand] = Subcom15_Communicate(SendCommand, TS)
 % 
@@ -32,35 +30,16 @@ F2 = 8000; % Sine wave frequency (8k hertz)
 SendCommand = cell2mat(SendCommand);
 
 if (~isempty(SendCommand))
-    % if TS == 1 
-    %     for k = 20
-    %         Timer1 = tic();
-    %         clear Timer1
-    %     end
-    %     Timer1 = tic();
-    % end
+    
     SendCommand = [1 0 1 SendCommand 1 0 1];
 
     [bfsk, t] = Subcom15_BFSK(SendCommand, dt, F1, F2);
 
     soundsc(bfsk, fs)
 
-    figure(1)
-    plot(t,bfsk);
-    xlabel('Time (ms)');
-    ylabel('Amplitude');
-    title('BFSK Signal');
-    axis([-0.01 1.01 -1.1 1.1]);
-
     ReceivedCommand = '';
 else
-
-    ReceivedCommand = [0 0 0 0 0 0 0 0];%Subcom15_Demodulate(bfsk, F1, F2, fs)';
-
-    % if TS == 1 
-    %    toc(Timer1); 
-    %    % TODO Make a GUI that displays information
-    % end
+    ReceivedCommand = Subcom15_Polling(bfsk, F1, F2, fs)'; %[0 0 0 0 0 0 0 0];
 end
 end
 
