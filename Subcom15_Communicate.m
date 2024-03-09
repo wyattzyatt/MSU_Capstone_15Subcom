@@ -31,7 +31,7 @@ SendCommand = cell2mat(SendCommand);
 
 if (~isempty(SendCommand))
     
-    SendCommand = [1 0 1 SendCommand 1 0 1];
+    SendCommand = [1 0 1 SendCommand];
 
     [bfsk, t] = Subcom15_BFSK(SendCommand, dt, F1, F2);
 
@@ -39,7 +39,7 @@ if (~isempty(SendCommand))
 
     ReceivedCommand = '';
 else
-    ReceivedCommand = Polling(fs, F1, F2, 1, 14)'; %[0 0 0 0 0 0 0 0];
+    ReceivedCommand = Polling(fs, F1, F2, 1, 11)'; %[0 0 0 0 0 0 0 0];
 end
 end
 
