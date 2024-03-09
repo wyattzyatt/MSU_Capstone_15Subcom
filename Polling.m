@@ -1,8 +1,6 @@
 function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
     % Polling loop for recieving and demodulating signal 
-    clc;
-    close all;
-
+    
     % Parameters
     % Fs = 48000; % Sampling frequency
     % F0 = 4000; 
@@ -30,7 +28,7 @@ function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
     % Create audioDeviceReader object
     audioReader = audioDeviceReader('SampleRate', Fs);
     % Main loop
-    while true
+    while isempty(demod_sig)
         % Reset flags and buffers
         isPulseDetected = false;
         isCapturing = false;
@@ -62,7 +60,7 @@ function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
                 [~, f_index] = min(abs((0:Fs/length(fft_data):Fs/2) - 8000));
     
                 % Check if the amplitude at the frequency of interest is significant
-                if fft_data(f_index) > 10 * mean(fft_data) % Adjust threshold as needed
+                if fft_data(f_index) > 20 * mean(fft_data) % Adjust threshold as needed
                     % Pulse detected
                     isPulseDetected = true;
                     fprintf('Pulse detected!\n');
@@ -71,7 +69,7 @@ function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
                     isCapturing = true;
                     captureBuffer = audioData; % Initialize capture buffer
                     
-                    captureBuffer = sgolayfilt(captureBuffer, 7, 9);
+                    captureBuffer = sgolayfilt(captureBuffer, 13,15); %Pool Parameters (13, 15)
                     % Start measuring time
                     startTime = tic;
                 end
@@ -83,32 +81,35 @@ function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
                 elapsedTime = toc(startTime);
                 if elapsedTime >= captureDuration
                     % Plot the capture buffer (for visualization)
-                    figure;
-                    t = (0:length(captureBuffer)-1) / Fs; % Time vector
-                    plot(t, captureBuffer);
-                    xlabel('Time (s)');
-                    ylabel('Amplitude');
-                    title('Captured Signal');
-                    %filtered_signal = smoothdata(captureBuffer,"gaussian");
-                    % Demodulate captured audio data
+                    % figure;
+                    % t = (0:length(captureBuffer)-1) / Fs; % Time vector
+                    % plot(t, captureBuffer);
+                    % xlabel('Time (s)');
+                    % ylabel('Amplitude');
                     demod_sig = demod(captureBuffer, F0, F1, Fs, numBitsToDemodulate);
-                    figure;
-                    stem(1:numBitsToDemodulate,demod_sig(1:14), 'LineWidth',1.5);
-                    ylim([-0.1 1.1]);
-                    xlabel('Time (ms)');
-                    ylabel('Amplitude');
-                    title('demod band signal');
-                    % Process the binary signal (e.g., print to console)
-                    disp(demod_sig);
+                    % close(figure);
+
+                    % Save the demodulated signal plot as a figure
+                    % fig = figure('visible', 'off');
+                    % stem(1:numBitsToDemodulate, demod_sig(1:numBitsToDemodulate), 'LineWidth', 1.5);
+                    % ylim([-0.1 1.1]);
+                    % xlabel('Time (ms)');
+                    % ylabel('Amplitude');
+                    % title('Demodulated Signal');
+                    % % Generate filename with timestamp
+                    % demodFilename = fullfile('Figures', ['demodulated_signal_', datetime('now'), '.png']);
+                    % saveas(fig, demodFilename);
+                    % close(fig); % Close the figure
+
+                    disp(demod_sig');
                     % Compare received bits with known command
                     % num_errors = sum(abs(demod_sig(1:14)' - knownCommand));
                     % totalErrors = [totalErrors, num_errors];
+                    release(audioReader);
                     break; % Exit loop since valid signal found
                     
                 end
             end
-
-            
         end
     end
     % Release audioDeviceReader object
