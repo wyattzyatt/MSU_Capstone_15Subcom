@@ -75,14 +75,20 @@ def communicate(numCommunicators, Title):
                 
             for sendCmd in shuffledCommands:
                 if(Title == "Daughter"):
+                    receivedCmd = ''
                     receivedCmd = communicator.readCommand()
+                    attempt = 0
                     while receivedCmd == '':
                         time.sleep(0.01)
-                        receivedCmd = communicator.readCommand()
+                        attempt = attempt + 1
+                        if attempt > 1000:
+                            receivedCmd = communicator.readCommand()
                     Time = timer1.tocvalue()
+                    communicator.join()
                     timer2.tic()
-                    communicator.sendCommand(sendCmd)
-                    time.sleep(1)
+                    # communicator.sendCommand(sendCmd)
+                    time.sleep(0.01)
+                    # communicator.join()
                 elif(Title == "Master"):
                     timer1.tic()
                     communicator.sendCommand(sendCmd)
