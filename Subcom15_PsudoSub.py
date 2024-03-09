@@ -26,44 +26,45 @@ def communicate(numCommunicators, Title):
             file = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             seed = 1
             for seed in range (256):
-                random.seed(seed)
-                currCount = len(communicator.commandList())
+                communicator.addCommand(f"Command{seed}")
+                # random.seed(seed)
+                # currCount = len(communicator.commandList())
                 
-                # Add commands of Random values
-                addCount = random.randint(6, 10)
-                attempt = 1
-                while len(communicator.commandList()) < currCount + addCount:
-                    prevCount = len(communicator.commandList())
-                    communicator.addCommand(f"Command{random.randint(0, 1024)}")
-                    if(len(communicator.commandList()) == prevCount & attempt > 24):
-                        break
-                    attempt = attempt + 1
+                # # Add commands of Random values
+                # addCount = random.randint(6, 10)
+                # attempt = 1
+                # while len(communicator.commandList()) < currCount + addCount:
+                #     prevCount = len(communicator.commandList())
+                #     communicator.addCommand(f"Command{random.randint(0, 1024)}")
+                #     if(len(communicator.commandList()) == prevCount & attempt > 24):
+                #         break
+                #     attempt = attempt + 1
                 
-                # Remove commands from random locations
-                removeCommands = random.sample(communicator.commandList(), random.randint(1,5))
-                for cmd in removeCommands:
-                    communicator.removeCommand(cmd)
+                # # Remove commands from random locations
+                # removeCommands = random.sample(communicator.commandList(), random.randint(1,5))
+                # for cmd in removeCommands:
+                #     communicator.removeCommand(cmd)
             
             # Add one additional set of commands with Random values
-            random.seed(seed)
+            # random.seed(seed)
             currCount = len(communicator.commandList())
             
             # Add commands of Random values
-            addCount = random.randint(6, 10)
-            attempt = 1
-            while len(communicator.commandList()) < currCount + addCount:
-                prevCount = len(communicator.commandList())
-                communicator.addCommand(f"Command{random.randint(0, 1024)}")
-                if(len(communicator.commandList()) == prevCount & attempt > 24):
-                    break
-                attempt = attempt + 1
-            print(f"Finished Command Number Testing, Commands: {len(communicator.commandList())}")
+            # addCount = random.randint(6, 10)
+            # attempt = 1
+            # while len(communicator.commandList()) < currCount + addCount:
+            #     prevCount = len(communicator.commandList())
+            #     communicator.addCommand(f"Command{random.randint(0, 1024)}")
+            #     if(len(communicator.commandList()) == prevCount & attempt > 24):
+            #         break
+            #     attempt = attempt + 1
+            # print(f"Finished Command Number Testing, Commands: {len(communicator.commandList())}")
             
-            seed = 1
-            for i in range(1,comNum+1): seed = seed * i
-            random.seed(seed)
+            # seed = 1
+            # for i in range(1,comNum+1): seed = seed * i
+            # random.seed(seed)
             # Send all commands in random order
-            shuffledCommands = random.sample(communicator.commandList(), len(communicator.commandList()))
+            shuffledCommands = communicator.commandList()#random.sample(communicator.commandList(), len(communicator.commandList()))
             commandNum = 0
             timer1 = TicToc()
             timer2 = TicToc()
