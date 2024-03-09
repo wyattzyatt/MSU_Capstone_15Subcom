@@ -39,15 +39,11 @@ if (~isempty(SendCommand))
 
     ReceivedCommand = '';
 else
-<<<<<<< Updated upstream
-    ReceivedCommand = Polling(fs, F1, F2, 1, 11)'; %[0 0 0 0 0 0 0 0];
-=======
     disp("Calling Polling")
     ReceivedCommand = Polling(fs, F1, F2, 1, 11)'; %[0 0 0 0 0 0 0 0];
     disp("Stopped Polling")
     disp(ReceivedCommand)
     ReceivedCommand = ReceivedCommand(4:end);
->>>>>>> Stashed changes
 end
 end
 
