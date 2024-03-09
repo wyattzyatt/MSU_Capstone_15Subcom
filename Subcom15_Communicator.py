@@ -106,6 +106,7 @@ class Communicator:
             time.sleep(1)
             self.send = ''
             self.sendBin = []
+            return
         self.receivedBin = []
         while self.receivedBin == []:
             self.receivedBin = self.eng.Subcom15_Communicate('', self.testSystem)[0]
