@@ -112,17 +112,26 @@ class Communicator:
         return
          
     def readCommand(self): # Returns the currently received command
+        received = ''
         if(self.receivedBin != []):
             binConversion = bin(int("".join(str(x)[0] for x in self.receivedBin), 2)) # Converts the received matlab format into a python binary string
             for cmd in self.commands.keys():
                 if(self.commands.get(cmd) == binConversion):
                     self.received = cmd
                     received = self.received
+                    self.receivedBin = []
         else:
             self.send = ''
             self.thread = threading.Thread(target=self.sendCommandEx)
             self.thread.start()
-            received = ''
+            while self.receivedBin == []:
+                pass
+            binConversion = bin(int("".join(str(x)[0] for x in self.receivedBin), 2)) # Converts the received matlab format into a python binary string
+            for cmd in self.commands.keys():
+                if(self.commands.get(cmd) == binConversion):
+                    self.received = cmd
+                    received = self.received
+                    self.receivedBin = []
            # print(f"Command Hasn't Been Received Yet")
         return received
             
