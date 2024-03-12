@@ -43,7 +43,7 @@ else
     ReceivedCommand = Polling(fs, F1, F2, 1, 11)'; %[0 0 0 0 0 0 0 0];
     disp("Stopped Polling")
     disp(ReceivedCommand)
-    ReceivedCommand = ReceivedCommand(4:end);
+    ReceivedCommand = ReceivedCommand(4:11);
 end
 end
 
