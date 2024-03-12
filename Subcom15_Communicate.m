@@ -24,6 +24,7 @@ function ReceivedCommand = Subcom15_Communicate(SendCommand, TS)
 % -- Variables
 fs = 48000; % Sampling frequency (samples per second)
 dt = 1/fs; % seconds per sample
+len = 0.5;
 F1 = 4000; % Sine wave frequency (4k hertz)
 F2 = 8000; % Sine wave frequency (8k hertz)
 
@@ -33,14 +34,14 @@ if (~isempty(SendCommand))
     
     SendCommand = [1 0 1 SendCommand];
 
-    [bfsk, t] = Subcom15_BFSK(SendCommand, dt, F1, F2);
+    [bfsk, t] = Subcom15_BFSK(SendCommand, dt, F1, F2, len);
 
     soundsc(bfsk, fs)
 
     ReceivedCommand = '';
 else
     disp("Calling Polling")
-    ReceivedCommand = Polling(fs, F1, F2, 1, 11)'; %[0 0 0 0 0 0 0 0];
+    ReceivedCommand = Polling(fs, F1, F2, len, 11)'; %[0 0 0 0 0 0 0 0];
     disp("Stopped Polling")
     disp(ReceivedCommand)
     ReceivedCommand = ReceivedCommand(4:11);

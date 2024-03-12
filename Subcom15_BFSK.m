@@ -1,6 +1,6 @@
 %% BFSK Creation Function
-function [bfsk, t] = Subcom15_BFSK(binary_string, dt, F1, F2)
-    StopTime = 1; % Time duration (seconds)
+function [bfsk, t] = Subcom15_BFSK(binary_string, dt, F1, F2, StopTime)
+    %StopTime = 1; % Time duration (seconds)
     t = (0:dt:StopTime-dt)';
     binary_length = length(binary_string);
     bit_duration = StopTime / binary_length;
