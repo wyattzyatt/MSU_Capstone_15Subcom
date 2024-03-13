@@ -35,3 +35,10 @@ __pycache__/
 
 # Cached VSCode Sync
 .vscode
+
+# Data Storage Files
+data/3.*
+data/4.*
+data/5.*
+data/Timing*
+data/Error*
