@@ -32,3 +32,6 @@ octave-workspace
 
 # Cached Python bytecode
 __pycache__/
+
+# Cached VSCode Sync
+.vscode
