@@ -57,14 +57,24 @@ class Communicator:
     def getName(self):
         Name = self.name
         return Name
+
+    def commandList(self, index): # Returns the list if commands the communicator currently has
+        nlist = list(self.commands.keys())
+        if index != None:
+            return nlist[index]
+        else:
+            return nlist
     
-    def commandList(self): # Returns the list if commands the communicator currently has
-        nlist = self.commands.keys()
-        return list(nlist)
+    def commandCodes(self, index): # Returns the codes for the commands that the communicator currently has
+        nlist = list(self.commands.values())
+        if index != None:
+            return nlist[index]
+        else:
+            return nlist
     
-    def commandCodes(self): # Returns the codes for the commands that the communicator currently has
-        nlist = self.commands.values()
-        return list(nlist)
+    def length(self):
+        length = len(self.commands)
+        return length
     
     def addCommand(self, CMD): # Adds a command to the Communicator's repertoire
         if(self.commands.get(CMD)):

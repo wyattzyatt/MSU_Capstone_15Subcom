@@ -70,20 +70,20 @@ def limitTest(communicator, random, seed, Add, Remove):
         random.seed(seed)
     elif(random == 2):
         random.seed(seed*seed)
-    currCount = len(communicator.commandList())
+    currCount = communicator.length()
     if(Add):
         # Add commands of Random values
         addCount = random.randint(6, 10)
         attempt = 1
-        while len(communicator.commandList()) < currCount + addCount:
-            prevCount = len(communicator.commandList())
+        while communicator.length() < currCount + addCount:
+            prevCount = communicator.length()
             communicator.addCommand(f"Command{random.randint(0, 1024)}")
-            if(len(communicator.commandList()) == prevCount & attempt > 24):
+            if(communicator.length() == prevCount & attempt > 24):
                 break
             attempt = attempt + 1
     if(Remove):
         # Remove commands from random locations
-        removeCommands = random.sample(communicator.commandList(), random.randint(1,5))
+        removeCommands = random.sample(communicator.commandList(None), random.randint(1,5))
         for cmd in removeCommands:
             communicator.removeCommand(cmd)
     return
@@ -107,13 +107,18 @@ def communicate(numCommunicators, title, testType):
                 limitTest(communicator,0,seed,True,True)
             # Add one additional set of commands with Random values
             limitTest(communicator,0,seed,True,False)
-            print(f"Finished Command Number Testing, Commands: {len(communicator.commandList())}")
+            print(f"Finished Command Number Testing, Commands: {communicator.length()}")
             
+            with open(f"data/{title}Commands.csv", 'w', newline='') as csvfile2:
+                file2 = csv.writer(csvfile2, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                for i in range(communicator.length()):
+                    file2.writerow([f"{title}{comNum}",communicator.commandList(i), communicator.commandCodes(i)])
+                
             seed = 1
             for i in range(1,comNum+1): seed = seed * i
             random.seed(seed)
             # Send all commands in random order
-            shuffledCommands = communicator.commandList()#random.sample(communicator.commandList(), len(communicator.commandList()))
+            shuffledCommands = communicator.commandList(None)#random.sample(communicator.commandList(None), communicator.length())
             commandNum = 0
                             
             if(title == "Daughter"):
