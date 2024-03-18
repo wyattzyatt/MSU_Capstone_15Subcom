@@ -7,10 +7,13 @@ def checkDuplicates(file):
     with open(file, 'r', newline='') as file:
         reader = csv.reader(file)
         for row in reader:
-            if row[0] in seen:
+            if row[1] in seen:
+                duplicates.append(row)
+            if row[2] in seen:
                 duplicates.append(row)
             else:
-                seen.add(row[0])
+                seen.add(row[1])
+                seen.add(row[2])
 
     return duplicates
 
@@ -18,9 +21,9 @@ def netDuplicates(motherFile, daughterFile):
     motherDuplicates = []
     daughterDuplicates = []
     try: motherDuplicates = checkDuplicates(motherFile)
-    except: pass
+    except: print("Didnt Open MotherFile")
     try: daughterDuplicates = checkDuplicates(daughterFile)
-    except: pass
+    except: print("Didnt Open DaughterFile")
     
     allDuplicates = motherDuplicates + daughterDuplicates
 
@@ -62,14 +65,14 @@ def compare_csv(motherFile, daughterFile):
     return error_rate
 
 
-testType = 0
+testType = 1
 if testType == 0:
     motherFile = "Mother_4.19.52.csv"
     daughterFile = "Daughter_4.19.4.csv"
     error_rate = compare_csv(motherFile, daughterFile)
 elif testType == 1:
-    motherCommands = "MotherCommands.csv"
-    daughterCommmands = "DaughterCommands.csv"
+    motherCommands = "data/TestCommands.csv"
+    daughterCommmands = ".csv"
     duplicates = netDuplicates(motherCommands, daughterCommmands)
     print(duplicates)
 elif testType == 2:

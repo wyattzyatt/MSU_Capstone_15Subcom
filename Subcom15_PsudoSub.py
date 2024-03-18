@@ -62,14 +62,14 @@ def csvWrite(file,communicator,title,comNum,SorR,commandNum,cmd,Time):
     file.writerow([f"{title}{comNum}{SorR}",commandNum,cmd, communicator.commands.get(cmd), Time])
     return
 
-def limitTest(communicator, random, seed, Add, Remove):
-    if(random == 0):
-        communicator.addCommand(f"Command{seed}")
+def limitTest(communicator, Random, Seed, Add, Remove):
+    if(Random == 0):
+        communicator.addCommand(f"Command{Seed}")
         return
-    elif(random == 1):
-        random.seed(seed)
-    elif(random == 2):
-        random.seed(seed*seed)
+    elif(Random == 1):
+        random.seed(Seed)
+    elif(Random == 2):
+        random.seed(Seed*Seed)
     currCount = communicator.length()
     if(Add):
         # Add commands of Random values
@@ -104,9 +104,9 @@ def communicate(numCommunicators, title, testType):
             communicator = Communicator(f"{title} {comNum}",f"Command0")
             seed = 1
             for seed in range (256):
-                limitTest(communicator,0,seed,True,True)
+                limitTest(communicator,1,seed,True,True)
             # Add one additional set of commands with Random values
-            limitTest(communicator,0,seed,True,False)
+            limitTest(communicator,1,seed,True,False)
             print(f"Finished Command Number Testing, Commands: {communicator.length()}")
             
             with open(f"data/{title}Commands.csv", 'w', newline='') as csvfile2:
