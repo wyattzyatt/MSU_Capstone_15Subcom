@@ -41,6 +41,7 @@ def sendInit(file,communicator,title,comNum,commandNum):
 
 def netSend(communicator,cmd,slow):
     delayTime = 4
+    time.sleep(delayTime)
     communicator.sendCommand(cmd)
     time.sleep(delayTime)
     communicator.join()
@@ -57,7 +58,7 @@ def doubleInit(file,communicator,title,comNum,commandNum):
             sendCmd = "Command229"
             TimeSen = time.time()
             netSend(communicator,sendCmd,True)
-            csvWriteL(file,communicator,title,comNum,commandNum,receivedCmd,TimeRec,sendCmd,TimeSen,)
+            csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec)
             
     if(title == "Mother"):
         for i in range(3):            
@@ -67,7 +68,7 @@ def doubleInit(file,communicator,title,comNum,commandNum):
             
             receivedCmd = netReceive(communicator)
             TimeRec = time.time()
-            csvWriteL(file,communicator,title,comNum,commandNum,receivedCmd,TimeRec,sendCmd,TimeSen,)
+            csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec)
     
     return
 
@@ -75,17 +76,17 @@ def csvWrite(file,communicator,title,comNum,SorR,commandNum,cmd,Time):
     file.writerow([f"{title}{comNum}{SorR}",commandNum,cmd, communicator.commands.get(cmd), Time])
     return
 
-def csvWriteL(file,communicator,title,comNum,commandNum,cmd1,Time1,cmd2,Time2):
-    file.writerow([f"{title}{comNum}", commandNum, "Sent:", cmd1, communicator.commands.get(cmd1), Time1,"Rec:", cmd2, communicator.commands.get(cmd2), Time2])
+def csvWriteL(file,communicator,title,comNum,commandNum,cmdSent,TimeSent,cmdRec,TimeRec):
+    file.writerow([f"{title}{comNum}", commandNum, "Sent:", cmdSent, communicator.commands.get(cmdSent), TimeSent,"Rec:", cmdRec, communicator.commands.get(cmdRec), TimeRec])
     return
 
 def limitTest(communicator, Random, Seed, Add, Remove):
-    if(Random == 0 | Random == 'N'):
+    if(Random == 0 or Random == 'N'):
         communicator.addCommand(f"Command{Seed}")
         return
-    elif(Random == 1 | Random == 'R'):
+    elif(Random == 1 or Random == 'R'):
         random.seed(Seed)
-    elif(Random == 2 | Random == 'R2'):
+    elif(Random == 2 or Random == 'R2'):
         random.seed(Seed*Seed)
     currCount = communicator.length()
     if(Add):
@@ -105,7 +106,7 @@ def limitTest(communicator, Random, Seed, Add, Remove):
             communicator.removeCommand(cmd)
     return
 
-def communicate(numCommunicators, title, testType):
+def communicate(numCommunicators, title, testType, randomType):
     totalCommands = list( None for _ in range(numCommunicators*256))
     
     currTime = f"{time.localtime()[3]%12}.{time.localtime()[4]}.{time.localtime()[5]}"
@@ -119,9 +120,9 @@ def communicate(numCommunicators, title, testType):
             communicator = Communicator(f"{title} {comNum}",f"Command0")
             seed = 1
             for seed in range (256):
-                limitTest(communicator,1,seed,True,True)
+                limitTest(communicator,randomType,seed,True,True)
             # Add one additional set of commands with Random values
-            limitTest(communicator,1,seed,True,False)
+            limitTest(communicator,randomType,seed,True,False)
             print(f"Finished Command Number Testing, Commands: {communicator.length()}")
             
             with open(f"data/{title}{comNum}Commands.csv", 'w', newline='') as csvfile2:
@@ -156,8 +157,7 @@ def communicate(numCommunicators, title, testType):
                         commandNum = commandNum + 1
                 
                 elif(testType == 3):
-                    receiveInit(file,communicator,title,comNum,commandNum)
-                    sendInit(file,communicator,title,comNum,commandNum)
+                    doubleInit(file,communicator,title,comNum,commandNum)
                     for i in range (256):
                         receivedCmd = netReceive(communicator)
                         TimeRec = time.time()
@@ -165,7 +165,7 @@ def communicate(numCommunicators, title, testType):
                         sendCmd = shuffledCommands[i]
                         TimeSen = time.time()
                         netSend(communicator,sendCmd,False)
-                        csvWriteL(file,communicator,title,comNum,commandNum,receivedCmd,TimeRec,sendCmd,TimeSen,)
+                        csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec)
                         commandNum = commandNum + 1                    
 
             elif(title == "Mother"):
@@ -188,8 +188,7 @@ def communicate(numCommunicators, title, testType):
                         commandNum = commandNum + 1
                 
                 elif(testType == 3):
-                    sendInit(file,communicator,title,comNum,commandNum)
-                    receiveInit(file,communicator,title,comNum,commandNum)
+                    doubleInit(file,communicator,title,comNum,commandNum)
                     for i in range (256):
                         sendCmd = shuffledCommands[i]
                         TimeSen = time.time()
@@ -197,6 +196,6 @@ def communicate(numCommunicators, title, testType):
                         
                         receivedCmd = netReceive(communicator)
                         TimeRec = time.time()
-                        csvWriteL(file,communicator,title,comNum,commandNum,receivedCmd,TimeRec,sendCmd,TimeSen,)
+                        csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec)
                         commandNum = commandNum + 1      
     return totalCommands

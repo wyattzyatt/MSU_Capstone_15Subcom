@@ -71,8 +71,8 @@ if testType == 0:
     daughterFile = "Daughter_4.19.4.csv"
     error_rate = compare_csv(motherFile, daughterFile)
 elif testType == 1:
-    motherCommands = "data/TestCommands.csv"
-    daughterCommmands = ".csv"
+    motherCommands = "data/Test8Commands.csv"
+    daughterCommmands = "data/Test9Commands.csv"
     duplicates = netDuplicates(motherCommands, daughterCommmands)
     print(duplicates)
 elif testType == 2:
@@ -84,4 +84,3 @@ elif testType == 2:
     daughterCommmands = "DaughterCommands.csv"
     duplicates = netDuplicates(motherCommands, daughterCommmands)
     
-# print("Error rate:", error_rate)
