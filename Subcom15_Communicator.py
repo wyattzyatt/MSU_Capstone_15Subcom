@@ -170,7 +170,8 @@ class Communicator:
         return
     
     def join(self): # If using the default command sending join threads once done to return threads to be usable
-        self.thread.join()
+        try: self.thread.join()
+        except: pass
         return
         
     def attachTestSystem(self): # Attaches the Test System for displaying information through MATLAB

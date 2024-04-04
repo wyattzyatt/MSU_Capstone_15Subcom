@@ -129,8 +129,8 @@ def communicate(numCommunicators, title, testType, randomType):
             removedCommands = 0
             commandsTested = [addedCommands,removedCommands]
             for seed in range (256):
-                if seed > 20:
-                    for i in range(1,seed%20): seed = seed * i
+                # if seed > 20:
+                #     for i in range(1,seed%20): seed = seed * i
                 tempCommandsTested = limitTest(communicator,randomType,seed,True,True)
                 commandsTested[0] = commandsTested[0] + tempCommandsTested[0]
                 commandsTested[1] = commandsTested[1] + tempCommandsTested[1]
