@@ -84,7 +84,10 @@ def csvWriteL(file,communicator,title,comNum,commandNum,cmdSent,TimeSent,cmdRec,
 def limitTest(communicator, Random, Seed, Add, Remove):
     if(Random == 0 or Random == 'N'):
         communicator.addCommand(f"Command{Seed}")
-        return
+        addCount = 1
+        removeCommands = []
+        commandsTested = [addCount, len(removeCommands)]
+        return commandsTested
     elif(Random == 1 or Random == 'R'):
         random.seed(Seed)
     elif(Random == 2 or Random == 'R2'):
