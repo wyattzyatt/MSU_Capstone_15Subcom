@@ -39,7 +39,7 @@ function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
             % Read a chunk of audio data
             audioData = audioReader();
             % Create bandpass filter coefficients for 4000 Hz and 8000 Hz
-            [b, a] = butter(5, [3900 8100]/(Fs/2), 'bandpass');
+            [b, a] = butter(4, [3900 8100]/(Fs/2), 'bandpass');
             
             % Apply bandpass filter to the incoming signal
             audioData = filter(b, a, audioData);
@@ -60,7 +60,7 @@ function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
                 [~, f_index] = min(abs((0:Fs/length(fft_data):Fs/2) - 8000));
     
                 % Check if the amplitude at the frequency of interest is significant
-                if fft_data(f_index) > 17 * mean(fft_data) & mean(fft_data)>0.03 % Adjust threshold as needed
+                if fft_data(f_index) > 17 * mean(fft_data) & mean(fft_data)>0.003 % Adjust threshold as needed
                     % Pulse detected
                     isPulseDetected = true;
                     fprintf('Pulse detected!\n');
@@ -69,7 +69,7 @@ function demod_sig = Polling(Fs, F0, F1, captureDuration,numBitsToDemodulate)
                     isCapturing = true;
                     captureBuffer = audioData; % Initialize capture buffer
                     
-                    captureBuffer = sgolayfilt(captureBuffer,17,21); %Pool Parameters (13, 15)
+                    captureBuffer = sgolayfilt(captureBuffer,13,15); %Pool Parameters (13, 15)
                     % Start measuring time
                     startTime = tic;
                 end

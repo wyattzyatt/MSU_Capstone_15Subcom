@@ -29,6 +29,7 @@ def netReceive(communicator):
         attempt = attempt + 1
         if attempt > 1000:
             receivedCmd = communicator.readCommand()
+    time.sleep(1.3)
     return receivedCmd
 
 def sendInit(file,communicator,title,comNum,commandNum):
@@ -40,13 +41,11 @@ def sendInit(file,communicator,title,comNum,commandNum):
     return
 
 def netSend(communicator,cmd,slow):
-    delayTime = 1.5
-    if slow: time.sleep(delayTime)
+    delayTime = 1
     communicator.sendCommand(cmd)
-    time.sleep(delayTime)
     communicator.join()
-    if slow:
-        time.sleep(delayTime*2)
+    if slow: time.sleep(delayTime*2)
+    time.sleep(delayTime)
     return
 
 def doubleInit(file,communicator,title,comNum,commandNum,addedCommands,removedCommands,netCommands):
@@ -128,9 +127,7 @@ def communicate(numCommunicators, title, testType, randomType):
             if inp == 'q' or inp == 'Q':
                 return totalCommands
             seed = 1
-            addedCommands =  0
-            removedCommands = 0
-            commandsTested = [addedCommands,removedCommands]
+            commandsTested = [0,0]
             for seed in range (256):
                 # if seed > 20:
                 #     for i in range(1,seed%20): seed = seed * i
@@ -141,6 +138,8 @@ def communicate(numCommunicators, title, testType, randomType):
             tempCommandsTested = limitTest(communicator,randomType,seed,True,False)
             commandsTested[0] = commandsTested[0] + tempCommandsTested[0]
             commandsTested[1] = commandsTested[1] + tempCommandsTested[1]
+            addedCommands =  commandsTested[0]
+            removedCommands = commandsTested[1]
             netCommands = communicator.length()
             print(f"Finished Command Number Testing, Add Count, Remove Count, Net Commands: {commandsTested,netCommands}")
             
@@ -214,8 +213,9 @@ def communicate(numCommunicators, title, testType, randomType):
                         sendCmd = shuffledCommands[i]
                         TimeSen = time.time()
                         netSend(communicator,sendCmd,False)
-                        
+                        # time.sleep(1.3)
                         receivedCmd = netReceive(communicator)
+                        # time.sleep(1)
                         TimeRec = time.time()
                         csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,communicator.length())
                         commandNum = commandNum + 1
