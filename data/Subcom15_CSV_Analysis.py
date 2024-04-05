@@ -48,10 +48,17 @@ def compare_csv(motherFile, daughterFile):
                 fileTiming = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 for mother_row, daughter_row in zip(mother_reader, daughter_reader):
                     total_count += 1
-                    mother_value = mother_row[2]
-                    daughter_value = daughter_row[2]
-                    fileTiming.writerow([f"R:{total_count}","Daughter:", daughter_row[2],daughter_row[3],daughter_row[4],"Mother:", mother_row[2],mother_row[3],mother_row[4],f"Transmission time:", float(daughter_row[4])-float(mother_row[4])])
+                    fileTiming.writerow([f"Mother to Daughter{total_count}:", mother_row[6], daughter_row[10], float(daughter_row[12])-float(mother_row[8]),f"Daughter to Mother{total_count}:", daughter_row[6], mother_row[10], float(mother_row[12])-float(daughter_row[8])])
 
+                    mother_value = mother_row[6]
+                    daughter_value = daughter_row[10]
+                    if mother_value != daughter_value:
+                        error_count += 1
+                        print(f"Row {total_count}: Daughter '{daughter_value}' != Mother '{mother_value}'")
+                        fileError.writerow(["Row:",total_count,"Daughter:", daughter_value,"Mother:", mother_value])
+
+                    mother_value = mother_row[10]
+                    daughter_value = daughter_row[6]
                     if mother_value != daughter_value:
                         error_count += 1
                         print(f"Row {total_count}: Daughter '{daughter_value}' != Mother '{mother_value}'")
@@ -65,10 +72,10 @@ def compare_csv(motherFile, daughterFile):
     return error_rate
 
 
-testType = 1
+testType = 0
 if testType == 0:
-    motherFile = "Mother_4.19.52.csv"
-    daughterFile = "Daughter_4.19.4.csv"
+    motherFile = "data/Mother_6.16.53.csv"
+    daughterFile = "data/Daughter_6.16.52.csv"
     error_rate = compare_csv(motherFile, daughterFile)
 elif testType == 1:
     motherCommands = "data/Test8Commands.csv"
