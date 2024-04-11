@@ -52,7 +52,7 @@ def netSend(communicator,cmd,messageLength):
     TimeSen = time.time()
     communicator.sendCommand(cmd)
     communicator.join()
-    time.sleep(messageLength-0.1)
+    time.sleep(messageLength+0.1)
     return TimeSen
 
 def doubleInit(file,communicator,title,comNum,commandNum,addedCommands,removedCommands,netCommands,messageLength):
