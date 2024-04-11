@@ -68,7 +68,7 @@ def doubleInit(file,communicator,title,comNum,commandNum,addedCommands,removedCo
             TimeSen = netSend(communicator,sendCmd,messageLength)
             
             # Write Data to CSV
-            csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,netCommands)
+            csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,netCommands,messageLength)
             
     if(title == "Mother"):
         for i in range(3):         
@@ -82,7 +82,7 @@ def doubleInit(file,communicator,title,comNum,commandNum,addedCommands,removedCo
             TimeRec = receivedData[1]
             
             # Write Data to CSV
-            csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,netCommands)
+            csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,netCommands,messageLength)
     
     return
 
@@ -92,9 +92,9 @@ def csvWrite(file,communicator,title,comNum,SorR,commandNum,cmd,Time):
     return
 
 # Write Data to CSV
-def csvWriteL(file,communicator,title,comNum,commandNum,cmdSent,TimeSent,cmdRec,TimeRec,addedCommands,removedCommands,netCommands):
-    file.writerow([f"{title}{comNum}",addedCommands,removedCommands,netCommands, commandNum, "Sent:", cmdSent, communicator.commands.get(cmdSent), TimeSent,"Rec:", cmdRec, communicator.commands.get(cmdRec), TimeRec])
-    # | Communicator Type | Commands Added | Commands Removed | Net Commands | commandNumber | Sent: | cmd | command binary | send Time | Received: | cmd | cmd binary | received Time |
+def csvWriteL(file,communicator,title,comNum,commandNum,cmdSent,TimeSent,cmdRec,TimeRec,addedCommands,removedCommands,netCommands,messageLength):
+    file.writerow([f"{title}{comNum}",addedCommands,removedCommands,netCommands, commandNum, "Sent:", cmdSent, communicator.commands.get(cmdSent), TimeSent,"Rec:", cmdRec, communicator.commands.get(cmdRec), TimeRec,"Message Length:",messageLength])
+    # | Communicator Type | Commands Added | Commands Removed | Net Commands | commandNumber | Sent: | cmd | command binary | send Time | Received: | cmd | cmd binary | received Time | Message Length: | Message Length |
     return
 
 # Test Limits of Adding and Removing from the communicator 
@@ -237,7 +237,7 @@ def communicate(numCommunicators, title, testType, randomType):
                         
                         # Write Data to CSV
                         startTime = TimeSen
-                        csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,communicator.length())
+                        csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,communicator.length(),messageLength)
                         commandNum = commandNum + 1
 
             elif(title == "Mother"):
@@ -279,7 +279,7 @@ def communicate(numCommunicators, title, testType, randomType):
                         TimeRec = receivedData[1]
                         
                         # Write Data to CSV
-                        csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,communicator.length())
+                        csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,communicator.length(),messageLength)
                         commandNum = commandNum + 1
                         print(f"Bidirectional transmission time: {TimeRec - TimeSen}")
     return 
