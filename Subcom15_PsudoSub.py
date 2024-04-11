@@ -145,7 +145,7 @@ def communicate(numCommunicators, title, testType, randomType):
             communicator = Communicator(f"{title} {comNum}",f"Command0")
             
             # Input Message Length for Test (q) to quit
-            inp = input(f"Test {comNum} Message Length: ")
+            inp = input(f"\nTest {comNum} Message Length: ")
             messageLength = float(1)
             if inp == 'q' or inp == 'Q':
                 print(f"{inp} pressed: Exiting")
@@ -155,13 +155,13 @@ def communicate(numCommunicators, title, testType, randomType):
                 messageLength = float (inp)
             
             # Input Number of Commands to Test (q) to quit
-            inp = input(f"Test {comNum} Command Count to test: ")
+            inp = input(f"\nTest {comNum} Command Count to test: ")
             commandTestCount = 256
             if inp == 'q' or inp == 'Q':
                 print(f"{inp} pressed: Exiting")
                 return
             elif float (inp):
-                print(f"Message Length of {inp} Seconds")
+                print(f"Number of commands to be tested: {inp}")
                 commandTestCount = int (inp)
             
             seed = 1
@@ -178,7 +178,7 @@ def communicate(numCommunicators, title, testType, randomType):
             addedCommands =  commandsTested[0]
             removedCommands = commandsTested[1]
             netCommands = communicator.length()
-            print(f"Finished Command Number Testing, Add Count, Remove Count, Net Commands: {commandsTested[0],commandsTested[1],netCommands}")
+            print(f"\nFinished Command Number Testing, Add Count, Remove Count, Net Commands: {commandsTested[0],commandsTested[1],netCommands}")
             
             # Record Commands to CSV for testing
             with open(f"data/{title}{comNum}Commands.csv", 'w', newline='') as csvfile2:
