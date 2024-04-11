@@ -35,7 +35,7 @@ def netReceive(communicator):
         if attempt > 1000:
             receivedCmd = communicator.readCommand()
     receivedData = [receivedCmd,time.time()]
-    time.sleep(1.3)
+    time.sleep(0.5) # Time for the Alternate system to start polling again
     return receivedData
 
 def sendInit(file,communicator,title,comNum,commandNum,messageLength):
