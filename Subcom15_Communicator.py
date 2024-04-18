@@ -24,8 +24,8 @@ Set Send Commands:
 Read Received Command:
     received_command = my_communicator.readCommand()
 Attach/Detach Test System:
-    my_communicator.attachTestSystem()
-    my_communicator.detachTestSystem()
+    my_communicator.attachmessageLength()
+    my_communicator.detachmessageLength()
 Join Threads (if necessary):
     my_communicator.join()
 
@@ -46,7 +46,7 @@ class Communicator:
         self.receivedBin = []
         self.send: str = ''
         self.sendBin = []
-        self.testSystem: float = 0.0
+        self.messageLength: float = 0.7
         self.timer1 = TicToc()
         self.timer1.tic()
         self.eng = matlab.engine.start_matlab()
@@ -112,14 +112,14 @@ class Communicator:
     def sendCommandEx(self): # Sends the command that is queued in self.send or to read from the communicator
         if (self.send != ''):
             pySendCommand = [float(int(c)) for c in self.sendBin[2:len(self.send)].zfill(8)] # creates an array of matlab formatted values from the binary
-            self.eng.Subcom15_Communicate(pySendCommand, self.testSystem)
+            self.eng.Subcom15_Communicate(pySendCommand, self.messageLength)
             time.sleep(1)
             self.send = ''
             self.sendBin = []
             return
         self.receivedBin = []
         while self.receivedBin == []:
-            self.receivedBin = self.eng.Subcom15_Communicate('', self.testSystem)[0]
+            self.receivedBin = self.eng.Subcom15_Communicate('', self.messageLength)[0]
         return
          
     def readCommand(self): # Returns the currently received command
@@ -174,16 +174,10 @@ class Communicator:
         except: pass
         return
         
-    def attachTestSystem(self): # Attaches the Test System for displaying information through MATLAB
-        if self.testSystem == 0:
-            self.testSystem = 1.0
+    def setMessageLength(self,newMessageLength: float = 0.7): # Attaches the Test System for displaying information through MATLAB
+        if newMessageLength > 0:
+            self.messageLength = newMessageLength
             return 1
         else:
-            return 0
-        
-    def detachTestSystem(self): # Detaches the Test System
-        if self.testSystem == 1:
-            self.testSystem = 0.0
-            return 1
-        else:
+            self.messageLength = 0.7 # Default message length
             return 0

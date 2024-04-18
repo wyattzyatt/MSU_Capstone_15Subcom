@@ -167,6 +167,7 @@ def communicate(numCommunicators, title, testType):
             elif float (inp):
                 print(f"Message Length of {inp} Seconds")
                 messageLength = float (inp)
+                communicator.setMessageLength(messageLength)
             
             # Input randomization type to Test (q) to quit
             inp = input(f"\nTest {comNum} Randomization Type (N, R, R2, R3): ")
