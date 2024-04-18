@@ -144,7 +144,7 @@ def communicate(numCommunicators, title, testType):
         file = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         
         # Input Number of Commands to Test per test (q) to quit
-        inp = input(f"\nTest {comNum} Command Count to test: ")
+        inp = input(f"\nNumber of commands per test: ")
         commandTestCount = 256
         if inp == 'q' or inp == 'Q':
             print(f"{inp} pressed: Exiting")
@@ -298,8 +298,8 @@ def communicate(numCommunicators, title, testType):
                         commandNum = commandNum + 1
                         print(f"Bidirectional transmission time: {TimeRec - TimeSen}")
         
-            file.writerow()
-            file.writerow()
-            file.writerow()
-            file.writerow()
+            file.writerow([])
+            file.writerow([])
+            file.writerow([])
+            file.writerow([])
     return 
