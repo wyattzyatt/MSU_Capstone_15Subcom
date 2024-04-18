@@ -35,7 +35,7 @@ def netReceive(communicator):
         if attempt > 1000:
             receivedCmd = communicator.readCommand()
     receivedData = [receivedCmd,time.time()]
-    time.sleep(0.5) # Time for the Alternate system to start polling again
+    time.sleep(1.3) # Time for the Alternate system to start polling again
     return receivedData
 
 def sendInit(file,communicator,title,comNum,commandNum,messageLength):
@@ -109,6 +109,10 @@ def limitTest(communicator, Random, Seed, Add, Remove):
         random.seed(Seed)
     elif(Random == 2 or Random == 'R2'):
         random.seed(Seed*Seed)
+    elif(Random == 3 or Random == 'R3'):
+        Seed2 = 1
+        for i in range(1,Seed): Seed2 = Seed2 * i
+        random.seed(Seed2)
     currCount = communicator.length()
     if(Add):
         # Add commands of Random values
@@ -129,7 +133,7 @@ def limitTest(communicator, Random, Seed, Add, Remove):
     commandsTested = [addCount, len(removeCommands)]
     return commandsTested
 
-def communicate(numCommunicators, title, testType, randomType):
+def communicate(numCommunicators, title, testType):
     # Attempt to make the data directory for storage
     currTime = f"{time.localtime()[3]%12}.{time.localtime()[4]}.{time.localtime()[5]}"
     currDate = f"{time.localtime()[1]}.{time.localtime()[2]}.{time.localtime()[0]}"
@@ -138,6 +142,16 @@ def communicate(numCommunicators, title, testType, randomType):
     time.sleep(1)
     with open(f"data/{currDate}/{title}_{currTime}.csv", 'w', newline='') as csvfile:
         file = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        
+        # Input Number of Commands to Test per test (q) to quit
+        inp = input(f"\nTest {comNum} Command Count to test: ")
+        commandTestCount = 256
+        if inp == 'q' or inp == 'Q':
+            print(f"{inp} pressed: Exiting")
+            return
+        elif float (inp):
+            print(f"Number of commands to be tested per test: {inp}")
+            commandTestCount = int (inp)
         
         # Iterate through number of tests
         for comNum in range(numCommunicators):
@@ -154,16 +168,15 @@ def communicate(numCommunicators, title, testType, randomType):
                 print(f"Message Length of {inp} Seconds")
                 messageLength = float (inp)
             
-            # Input Number of Commands to Test (q) to quit
-            inp = input(f"\nTest {comNum} Command Count to test: ")
-            commandTestCount = 256
+            # Input randomization type to Test (q) to quit
+            inp = input(f"\nTest {comNum} Randomization Type (N, R, R2, R3): ")
             if inp == 'q' or inp == 'Q':
                 print(f"{inp} pressed: Exiting")
                 return
-            elif float (inp):
-                print(f"Number of commands to be tested: {inp}")
-                commandTestCount = int (inp)
-            
+            else:
+                print(f"Random Type: {inp}")
+                randomType = inp
+                
             seed = 1
             commandsTested = [0,0]
             for seed in range (256):
@@ -211,12 +224,13 @@ def communicate(numCommunicators, title, testType, randomType):
                 # Only Send
                 elif(testType == 2):
                     sendInit(file,communicator,title,comNum,commandNum,messageLength)
-                    for sendCmd in shuffledCommands:
+                    for i in range (commandTestCount):
                         # Send
-                        Time = netSend(communicator,sendCmd,messageLength)
+                        sendCmd = shuffledCommands[i]
+                        TimeSen = netSend(communicator,sendCmd,messageLength)
                         
                         # Write Data to CSV
-                        csvWrite(file,communicator,title,comNum,"Sen:",commandNum,sendCmd,Time)
+                        csvWrite(file,communicator,title,comNum,"Sen:",commandNum,sendCmd,TimeSen)
                         commandNum = commandNum + 1
                 
                 # Receive then Send
@@ -244,12 +258,13 @@ def communicate(numCommunicators, title, testType, randomType):
                 # Only Send
                 if(testType == 1):
                     sendInit(file,communicator,title,comNum,commandNum,messageLength)
-                    for sendCmd in shuffledCommands:
+                    for i in range (commandTestCount):
                         # Send
-                        Time = netSend(communicator,sendCmd,messageLength)
+                        sendCmd = shuffledCommands[i]
+                        TimeSen = netSend(communicator,sendCmd,messageLength)
                         
                         # Write Data to CSV
-                        csvWrite(file,communicator,title,comNum,"Sen:",commandNum,sendCmd,Time)
+                        csvWrite(file,communicator,title,comNum,"Sen:",commandNum,sendCmd,TimeSen)
                         commandNum = commandNum + 1
                 
                 # Only Receive
@@ -282,4 +297,9 @@ def communicate(numCommunicators, title, testType, randomType):
                         csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,communicator.length(),messageLength)
                         commandNum = commandNum + 1
                         print(f"Bidirectional transmission time: {TimeRec - TimeSen}")
+        
+            file.writerow()
+            file.writerow()
+            file.writerow()
+            file.writerow()
     return 
