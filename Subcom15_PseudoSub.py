@@ -10,8 +10,6 @@ from Subcom15_Communicator import Communicator
 import random
 import time
 from pytictoc import TicToc
-import matplotlib.pyplot as plt
-import numpy as np
 import csv
 import os
 
@@ -154,22 +152,6 @@ def communicate(numCommunicators, title, testType):
         elif float (inp):
             print(f"Number of commands to be tested per test: {inp}")
             commandTestCount = int (inp)
-        
-        if(title == "Mother"):
-            # Initialize lists to store transmission times and running average
-            transmission_times = []
-            running_average = []
-
-            # Initialize plot
-            plt.ion()  # Turn on interactive mode
-            fig, ax = plt.subplots()
-            line, = ax.plot([], [], label='Transmission Time')
-            avg_line, = ax.plot([], [], linestyle='--', color='green', label='Running Average')
-            ax.legend()
-            ax.set_title('Transmission Times and Running Average')
-            ax.set_xlabel('Transmission Count')
-            ax.set_ylabel('Time (s)')
-            ax.grid(True)
         
         # Iterate through number of tests
         for comNum in range(numCommunicators):
@@ -315,34 +297,10 @@ def communicate(numCommunicators, title, testType):
                         # Calculate transmission time
                         transmission_time = TimeRec - TimeSen - 0.5
                         
-                        # Append transmission time to the list
-                        transmission_times.append(transmission_time)
-                        
-                        avgDepth = 10
-                        dispDepth = 100
-                        
-                        # Update running average
-                        avg = np.mean(transmission_times[-avgDepth:])
-                        running_average.append(avg)
-                        
-                        # Update plot data
-                        line.set_data(range(len(transmission_times[-dispDepth:])), transmission_times[-dispDepth:])
-                        avg_line.set_data(range(len(running_average[-dispDepth:])), running_average[-dispDepth:])
-                        
-                        # Adjust plot limits
-                        ax.set_xlim(0, len(transmission_times[-dispDepth:]))
-                        ax.set_ylim(0, max(max(transmission_times[-dispDepth:]), max(running_average[-avgDepth:])) * 1.1)
-                        
-                        # Redraw plot
-                        plt.draw()
-                        plt.pause(0.001)
-                        
                         # Write Data to CSV
                         csvWriteL(file,communicator,title,comNum,commandNum,sendCmd,TimeSen,receivedCmd,TimeRec,addedCommands,removedCommands,communicator.length(),messageLength)
                         commandNum = commandNum + 1
                         print(f"Bidirectional transmission time: {transmission_time}")
-                        # plt.ioff()  # Turn off interactive mode after loop
-                        plt.show()  # Keep plot open after loop ends
             file.writerow([])
             file.writerow([])
             file.writerow([])
